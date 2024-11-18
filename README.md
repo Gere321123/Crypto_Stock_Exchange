@@ -14,11 +14,25 @@
 
 - **Market Stability:** Bitcoin's larger market cap makes it less volatile compared to Ethereum.
 - **Investor Confidence:** With more liquidity in Bitcoin, investors are likely to feel more secure.
-- **Future Growth:** Bitcoin's adoption continues to grow, reinforcing its position as the backbone of decentralized finance.
+- **Global Wealth Allocation:** Around 1% of all global money is currently in Bitcoin. This demonstrates significant trust and adoption in Bitcoin's ecosystem.
+- **BlackRock's Role:** BlackRock, one of the most powerful financial companies globally, owns approximately 10% of all Bitcoin. BlackRock played a critical role in stabilizing the U.S. economy during the 2008 financial crisis. With their substantial Bitcoin holdings, they are likely to work towards increasing Bitcoin's value, further stabilizing and boosting its adoption.
+
+## What Happens If a Company Fails to Pay Dividends?
+
+The **Crypto Stock Exchange** enforces strict rules to ensure investor trust:
+- Companies that fail to pay dividends when required lose access to their tokenized stocks. 
+- This means they are unable to withdraw any funds from their tokenized equity, creating strong accountability and ensuring that companies prioritize investor returns.
+
+## Simple Stock Price Adjustment Formula
+
+To maintain a dynamic and fair market, we have implemented a **simple formula similar to Uniswap's automated market maker model** for determining stock prices:
+- Stock prices adjust automatically based on supply and demand.
+- This ensures liquidity and enables real-time price discovery, making our platform efficient and transparent.
 
 ## Project Development Status
 
 The project is currently in its early stages, and the platform is being rewritten to work on **RSK**, a smart contract platform powered by Bitcoin.
 
+---
 
 We are excited to continue improving and welcome feedback from the community to make **Crypto Stock Exchange** the go-to platform for decentralized fundraising.
