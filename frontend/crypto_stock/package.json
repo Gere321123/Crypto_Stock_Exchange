@@ -1,0 +1,30 @@
+{
+  "name": "crypto_stock",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "lint": "biome check .",
+    "preview": "vite preview",
+    "serve": "vue-cli-service serve"
+  },
+  "dependencies": {
+    "@tanstack/vue-query": ">=5.45.0",
+    "@type_of/use-wagmi-contracts": "^0.0.12",
+    "@wagmi/vue": "latest",
+    "axios": "^1.7.7",
+    "viem": "latest",
+    "vue": ">=3.4.21",
+    "vue-router": "^4.4.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "@vue/cli-service": "^5.0.8",
+    "buffer": "^6.0.3",
+    "typescript": "^5.6.3",
+    "vite": "^5.2.11",
+    "vue-tsc": "^2.0.6"
+  }
+}
