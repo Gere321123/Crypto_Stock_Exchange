@@ -2,7 +2,8 @@
 pragma solidity ^0.8.0;
 
 // Import OpenZeppelin's ERC20 implementation
-import {ERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {console} from "forge-std/console.sol";
@@ -23,7 +24,8 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     error Coin__InsufficientWBTCInContract();
     error Coin__FailedToReceiveWBTC();
 
-    address private wBTCAddress = 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
+    address private constant wBTCAddress = 0x9BE89D2a4cd102D8Fecc6BF9dA793be995C22541; //This wrapper Bitcoin address is for Binance
+    IERC20 public wBTC;
 
     address private immutable i_owner;
     uint8 private immutable i_OWNERWITHDRAWALPERCENTAGE;
@@ -52,6 +54,10 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         address _i_secondowner,
         uint256 _i_numberOfVirtualWei
     ) ERC20("CryptoStock", "CS") Ownable(address(this)) {
+        wBTC = IERC20(wBTCAddress);
+
+        console.log(wBTC.totalSupply());
+
         i_owner = msg.sender;
 
         i_company = _company;
@@ -95,12 +101,15 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     }
 
     function buyTokens(uint256 wBTCAmount) external nonReentrant wBitMoreThenZeroAndTheSenderHaveEnough(wBTCAmount) {
+        console.log("Here is it the error");
         uint256 numberOfTokensAffterBuy = i_formulaConstans / (getwBTCBalance() + numberOfVirtualWei);
+        console.log("Here is it the error2");
         uint256 tokensToBuy = totalSupply() - numberOfTokensInTheMarcetCap - numberOfTokensAffterBuy;
+        console.log("Here is it the error3");
         if (tokensToBuy > balanceOf(address(this))) {
             revert Coin__NotEnoughTokensAvailable();
         }
-
+        console.log("Here is it the error4");
         // Transfer wBTC from buyer to the contract
         bool success = IERC20(wBTCAddress).transferFrom(msg.sender, address(this), wBTCAmount);
         if (!success) {
@@ -253,7 +262,9 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     }
 
     function getwBTCBalance() public view returns (uint256) {
-        return IERC20(wBTCAddress).balanceOf(address(this));
+        uint256 balance = IERC20(wBTCAddress).balanceOf(address(this));
+        console.log("Contract WBTC balance: ", balance);
+        return balance;
     }
 
     function getwBTCBalanceNotZero() public view returns (uint256) {

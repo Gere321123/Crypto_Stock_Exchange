@@ -5,7 +5,7 @@ import "forge-std/Script.sol";
 import "../src/Coin.sol";
 
 contract DeployCoin is Script {
-    function run() external {
+    function run() external returns (Coin) {
         // Addresses provided
         address company = 0x70997970C51812dc3A010C7d01b50e0d17dc79C8;
         address secondOwner = 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC;
@@ -32,8 +32,6 @@ contract DeployCoin is Script {
         );
 
         vm.stopBroadcast();
-
-        // Log deployed contract address
-        console.log("Coin deployed at:", address(coin));
+        return coin;
     }
 }
