@@ -26,7 +26,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     address private wBTCAddress = 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
 
     address private immutable i_owner;
-    uint8 private oWNERWITHDRAWALPERCENTAGE;
+    uint8 private immutable i_OWNERWITHDRAWALPERCENTAGE;
     uint256 private ownerAllreadyWithdrawalThisMany = 0;
     address private immutable i_secondowner;
     uint8 private immutable i_SECONDOWNERWITHDRAWALPERCENTAGE;
@@ -57,7 +57,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         i_company = _company;
         companyWithdrawalPercentage = _companyWithdrawalPercentage;
         i_SECONDOWNERWITHDRAWALPERCENTAGE = _i_SECONDOWNERWITHDRAWALPERCENTAGE;
-        oWNERWITHDRAWALPERCENTAGE = _i_OWNERWITHDRAWALPERCENTAGE;
+        i_OWNERWITHDRAWALPERCENTAGE = _i_OWNERWITHDRAWALPERCENTAGE;
         i_secondowner = _i_secondowner;
         numberOfVirtualWei = _i_numberOfVirtualWei;
 
@@ -207,7 +207,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     function withdowOwners(uint256 withdrawValueinWei) external {
         if (msg.sender == i_owner) {
             withdrawMoney(
-                withdrawValueinWei, int256(ownerAllreadyWithdrawalThisMany), oWNERWITHDRAWALPERCENTAGE, i_owner
+                withdrawValueinWei, int256(ownerAllreadyWithdrawalThisMany), i_OWNERWITHDRAWALPERCENTAGE, i_owner
             );
             ownerAllreadyWithdrawalThisMany += withdrawValueinWei;
         } else {
@@ -265,7 +265,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     }
 
     function setcompanyWithdrawalPercentage(uint8 newcompanyWithdrawalPercentage) external onlyOwner {
-        if (newcompanyWithdrawalPercentage + oWNERWITHDRAWALPERCENTAGE + i_SECONDOWNERWITHDRAWALPERCENTAGE < 100) {
+        if (newcompanyWithdrawalPercentage + i_OWNERWITHDRAWALPERCENTAGE + i_SECONDOWNERWITHDRAWALPERCENTAGE < 100) {
             companyWithdrawalPercentage = newcompanyWithdrawalPercentage;
         } else {
             revert Coin__CompanyWantsToWithdrawMoreMoneyThanAllowed();
@@ -291,12 +291,6 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
 
     function setCompanyCanWithdraw(bool _companyCanWithdraw) external onlyOwner {
         companyCanWithdraw = _companyCanWithdraw;
-    }
-
-    function setoWNERWITHDRAWALPERCENTAGE(uint8 _oWNERWITHDRAWALPERCENTAGE) external onlyOwner {
-        if (companyWithdrawalPercentage + _oWNERWITHDRAWALPERCENTAGE + i_SECONDOWNERWITHDRAWALPERCENTAGE < 100) {
-            oWNERWITHDRAWALPERCENTAGE = _oWNERWITHDRAWALPERCENTAGE;
-        }
     }
 
     function getMarketCap() public view returns (uint256) {
