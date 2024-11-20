@@ -51,7 +51,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         uint8 _i_SECONDOWNERWITHDRAWALPERCENTAGE,
         address _i_secondowner,
         uint256 _i_numberOfVirtualWei
-    ) ERC20("FixedSupplyCoin", "FSC") Ownable(address(this)) {
+    ) ERC20("CryptoStock", "CS") Ownable(address(this)) {
         i_owner = msg.sender;
 
         i_company = _company;
