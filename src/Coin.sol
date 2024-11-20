@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 // Import OpenZeppelin's ERC20 implementation
-import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import {ERC20, IERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {console} from "forge-std/console.sol";
@@ -11,12 +11,19 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     error Coin__MustBeMoreThanZero();
     error Coin__NotEnoughTokensAvailable();
     error Coin__InsufficientTokens();
-    error Coin__InsufficientETHInContract();
-    error Coin__FailedToSendETH();
+    error Coin__InsufficientBITInContract();
+    error Coin__FailedToSendBIT();
     error Coin__NotAuthorized();
     error Coin__CompanyWantsToWithdrawMoreMoneyThanAllowed();
     error Coin__BurnMoreThanTheTokensInTheMarcatCap();
-    error Coin__ethBalanceMustBeMoreThanZero();
+    error Coin__bitBalanceMustBeMoreThanZero();
+    error Coin__InsufficientWBTC();
+    error Coin__WBTCTransferFailed();
+    error Coin__FailedToSendWBTC();
+    error Coin__InsufficientWBTCInContract();
+    error Coin__FailedToReceiveWBTC();
+
+    address private wBTCAddress = 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
 
     address private immutable i_owner;
     uint8 private oWNERWITHDRAWALPERCENTAGE;
@@ -75,20 +82,35 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         _;
     }
 
-    function buyTokens() external payable nonReentrant {
-        if (msg.value < 0) {
+    modifier wBitMoreThenZeroAndTheSenderHaveEnough(uint256 wBTCAmount) {
+        if (wBTCAmount < 0) {
             revert Coin__MustBeMoreThanZero();
         }
 
-        uint256 numberOfTokensAffterBuy = i_formulaConstans / (getethBalance() + numberOfVirtualWei);
+        uint256 senderWBTCBalance = IERC20(wBTCAddress).balanceOf(msg.sender);
+        if (senderWBTCBalance < wBTCAmount) {
+            revert Coin__InsufficientWBTC();
+        }
+        _;
+    }
+
+    function buyTokens(uint256 wBTCAmount) external nonReentrant wBitMoreThenZeroAndTheSenderHaveEnough(wBTCAmount) {
+        uint256 numberOfTokensAffterBuy = i_formulaConstans / (getwBTCBalance() + numberOfVirtualWei);
         uint256 tokensToBuy = totalSupply() - numberOfTokensInTheMarcetCap - numberOfTokensAffterBuy;
         if (tokensToBuy > balanceOf(address(this))) {
             revert Coin__NotEnoughTokensAvailable();
         }
 
+        // Transfer wBTC from buyer to the contract
+        bool success = IERC20(wBTCAddress).transferFrom(msg.sender, address(this), wBTCAmount);
+        if (!success) {
+            revert Coin__WBTCTransferFailed();
+        }
+
         // Transfer tokens to the buyer
         _transfer(address(this), msg.sender, tokensToBuy);
         numberOfTokensInTheMarcetCap += tokensToBuy;
+
         adjustPrice();
     }
 
@@ -96,83 +118,101 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         if (_tokenAmount <= 0) {
             revert Coin__MustBeMoreThanZero();
         }
+
         uint256 userBalance = balanceOf(msg.sender);
         if (userBalance < _tokenAmount) {
             revert Coin__InsufficientTokens();
         }
 
-        uint256 numberOfWeiAffterBuy = i_formulaConstans / (totalSupply() - numberOfTokensInTheMarcetCap + _tokenAmount);
-        uint256 weitAmountToReturn = getethBalance() + numberOfVirtualWei - numberOfWeiAffterBuy;
+        // Calculate the amount of wBTC to return
+        uint256 numberOfWeiAfterSell = i_formulaConstans / (totalSupply() - numberOfTokensInTheMarcetCap + _tokenAmount);
+        uint256 wBTCAmountToReturn = getwBTCBalance() + numberOfVirtualWei - numberOfWeiAfterSell;
 
-        if (address(this).balance < weitAmountToReturn) {
-            revert Coin__InsufficientETHInContract();
+        // Check if the contract has enough wBTC
+        uint256 contractwBTCBalance = IERC20(wBTCAddress).balanceOf(address(this));
+        if (contractwBTCBalance < wBTCAmountToReturn) {
+            revert Coin__InsufficientWBTCInContract();
         }
-
-        // Adjust the price based on sell
 
         // Transfer the tokens from the seller to the contract
         _transfer(msg.sender, address(this), _tokenAmount);
 
-        // Send ETH to the seller
-        (bool sent,) = msg.sender.call{value: weitAmountToReturn}("");
-        if (!sent) {
-            revert Coin__FailedToSendETH();
+        // Transfer wBTC to the seller
+        bool success = IERC20(wBTCAddress).transfer(msg.sender, wBTCAmountToReturn);
+        if (!success) {
+            revert Coin__FailedToSendWBTC();
         }
+
+        // Adjust the market cap and price
         numberOfTokensInTheMarcetCap -= _tokenAmount;
 
         adjustPrice();
     }
 
     function adjustPrice() internal {
-        valueOfOneTokenInWei =
-            (numberOfVirtualWei + getethBalance()) * (10 ** decimals()) / (totalSupply() - numberOfTokensInTheMarcetCap);
+        valueOfOneTokenInWei = (numberOfVirtualWei + getwBTCBalance()) * (10 ** decimals())
+            / (totalSupply() - numberOfTokensInTheMarcetCap);
     }
 
-    // Withdraw ETH function for the company
+    // Withdraw BIT function for the company
     function withdrawCompany(uint256 withdrawValueinWei) external onlyCompany {
         if (companyCanWithdraw) {
-            withdrowMoney(withdrawValueinWei, companyAllreadyWithdrawalThisMany, companyWithdrawalPercentage, i_company);
+            withdrawMoney(withdrawValueinWei, companyAllreadyWithdrawalThisMany, companyWithdrawalPercentage, i_company);
             companyAllreadyWithdrawalThisMany += int256(withdrawValueinWei);
         }
     }
 
-    function uplodeMoney() external payable onlyCompany nonReentrant {
-        if (msg.value < 0) {
-            revert Coin__MustBeMoreThanZero();
+    function uplodeMoney(uint256 wBTCAmount)
+        external
+        onlyCompany
+        nonReentrant
+        wBitMoreThenZeroAndTheSenderHaveEnough(wBTCAmount)
+    {
+        // Transfer wBTC from the caller to the contract
+        bool success = IERC20(wBTCAddress).transferFrom(msg.sender, address(this), wBTCAmount);
+        if (!success) {
+            revert Coin__FailedToReceiveWBTC();
         }
 
-        uint256 ethBalance = getethBalanceNotZero();
+        uint256 bitBalance = getwBTCBalanceNotZero();
 
-        uint256 tokensAfftherBurn = i_formulaConstans / (ethBalance + numberOfVirtualWei);
-        burn(totalSupply() - numberOfTokensInTheMarcetCap - tokensAfftherBurn);
+        // Calculate tokens after the burn
+        uint256 tokensAfterBurn = i_formulaConstans / (bitBalance + numberOfVirtualWei);
 
-        numberOfVirtualWei += (msg.value * numberOfVirtualWei) / (ethBalance - msg.value);
+        // Burn excess tokens
+        burn(totalSupply() - numberOfTokensInTheMarcetCap - tokensAfterBurn);
 
-        companyAllreadyWithdrawalThisMany -= int256(msg.value);
+        // Adjust numberOfVirtualWei based on the wBTC uploaded
+        numberOfVirtualWei += (wBTCAmount * numberOfVirtualWei) / (bitBalance - wBTCAmount);
+
+        // Update company withdrawal tracker
+        companyAllreadyWithdrawalThisMany -= int256(wBTCAmount);
+
+        // Adjust the token price
         adjustPrice();
     }
 
-    function cahngePrice(uint256 valueinWei) internal {
-        uint256 ethBalance = getethBalanceNotZero();
+    function changePrice(uint256 valueinWei) internal {
+        uint256 bitBalance = getwBTCBalanceNotZero();
 
-        uint256 tokensAfftherMint = i_formulaConstans / (ethBalance + numberOfVirtualWei);
+        uint256 tokensAfftherMint = i_formulaConstans / (bitBalance + numberOfVirtualWei);
         uint256 numberOfmint = tokensAfftherMint - (totalSupply() - numberOfTokensInTheMarcetCap);
         mint(numberOfmint);
 
-        uint256 burnVirtualEth = (valueinWei * numberOfVirtualWei) / (ethBalance + valueinWei);
-        numberOfVirtualWei -= burnVirtualEth;
+        uint256 burnVirtualBit = (valueinWei * numberOfVirtualWei) / (bitBalance + valueinWei);
+        numberOfVirtualWei -= burnVirtualBit;
         adjustPrice();
     }
 
     function withdowOwners(uint256 withdrawValueinWei) external {
         if (msg.sender == i_owner) {
-            withdrowMoney(
+            withdrawMoney(
                 withdrawValueinWei, int256(ownerAllreadyWithdrawalThisMany), oWNERWITHDRAWALPERCENTAGE, i_owner
             );
             ownerAllreadyWithdrawalThisMany += withdrawValueinWei;
         } else {
             if (msg.sender == i_secondowner) {
-                withdrowMoney(
+                withdrawMoney(
                     withdrawValueinWei,
                     int256(secondownerAllreadyWithdrawalThisMany),
                     i_SECONDOWNERWITHDRAWALPERCENTAGE,
@@ -185,43 +225,43 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         }
     }
 
-    function withdrowMoney(
-        uint256 withdrawValueinWei,
-        int256 allreadyWithdrawalThisMany,
+    function withdrawMoney(
+        uint256 withdrawValueInWBTC,
+        int256 alreadyWithdrawnThisMany,
         uint256 withdrawalPercentage,
         address _to
     ) internal nonReentrant {
-        int256 ethBalance = int256(getethBalance());
-        int256 maxWithdrawal = ethBalance * int256(withdrawalPercentage) / 100;
+        // Get the contract's wBTC balance
+        int256 wBTCBalance = int256(getwBTCBalance());
 
-        // Revert if the requested withdrawal exceeds the 20% limit
-        if (int256(withdrawValueinWei) + allreadyWithdrawalThisMany > maxWithdrawal) {
-            revert Coin__InsufficientETHInContract();
+        // Calculate the maximum withdrawal allowed based on the percentage
+        int256 maxWithdrawal = (wBTCBalance * int256(withdrawalPercentage)) / 100;
+
+        // Revert if the requested withdrawal exceeds the allowed percentage
+        if (int256(withdrawValueInWBTC) + alreadyWithdrawnThisMany > maxWithdrawal) {
+            revert Coin__InsufficientWBTCInContract();
         }
 
-        // Send the requested value to the company
-        (bool success,) = payable(_to).call{value: withdrawValueinWei}("");
+        // Transfer wBTC to the specified address
+        bool success = IERC20(wBTCAddress).transfer(_to, withdrawValueInWBTC);
         if (!success) {
-            revert Coin__InsufficientETHInContract();
+            revert Coin__FailedToSendWBTC();
         }
 
-        cahngePrice(withdrawValueinWei);
+        // Adjust the price or perform other necessary updates
+        changePrice(withdrawValueInWBTC);
     }
 
-    function getethBalance() public view returns (uint256) {
-        uint256 ethBalance = address(this).balance;
-        if (ethBalance < 0) {
-            revert Coin__InsufficientETHInContract();
-        }
-        return ethBalance;
+    function getwBTCBalance() public view returns (uint256) {
+        return IERC20(wBTCAddress).balanceOf(address(this));
     }
 
-    function getethBalanceNotZero() public view returns (uint256) {
-        uint256 ethBalance = address(this).balance;
-        if (ethBalance <= 0) {
+    function getwBTCBalanceNotZero() public view returns (uint256) {
+        uint256 balance = getwBTCBalance();
+        if (balance <= 0) {
             revert Coin__MustBeMoreThanZero();
         }
-        return ethBalance;
+        return balance;
     }
 
     function setcompanyWithdrawalPercentage(uint8 newcompanyWithdrawalPercentage) external onlyOwner {
