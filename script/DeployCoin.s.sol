@@ -11,11 +11,11 @@ contract DeployCoin is Script {
         address secondOwner = 0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC;
 
         // Parameters for deployment
-        uint256 numberOfTokens = 1000000; // Example token supply, adjust as needed
+        uint256 numberOfTokens = 10000000; // Example token supply, adjust as needed
         uint8 companyWithdrawalPercentage = 20; // Company withdrawal percentage
         uint8 ownerWithdrawalPercentage = 5; // Owner withdrawal percentage
         uint8 secondOwnerWithdrawalPercentage = 3; // Second owner withdrawal percentage
-        uint256 numberOfVirtualWei = 100000000000000000; // Example virtual Wei balance, adjust as needed
+        uint256 numberOfVirtualWei = 10000000000000000000; // Example virtual Wei balance, adjust as needed
 
         // Start broadcasting transactions
         vm.startBroadcast();
