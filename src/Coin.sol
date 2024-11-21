@@ -54,10 +54,6 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         address _i_secondowner,
         uint256 _i_numberOfVirtualWei
     ) ERC20("CryptoStock", "CS") Ownable(address(this)) {
-        wBTC = IERC20(wBTCAddress);
-
-        console.log(wBTC.totalSupply());
-
         i_owner = msg.sender;
 
         i_company = _company;
@@ -263,7 +259,6 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
 
     function getwBTCBalance() public view returns (uint256) {
         uint256 balance = IERC20(wBTCAddress).balanceOf(address(this));
-        console.log("Contract WBTC balance: ", balance);
         return balance;
     }
 
