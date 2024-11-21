@@ -36,3 +36,8 @@ The project is currently in its early stages, and the platform is being rewritte
 ---
 
 We are excited to continue improving and welcome feedback from the community to make **Crypto Stock Exchange** the go-to platform for decentralized fundraising.
+
+## To test the contract in BNB testnet:
+
+Hash: 0x5a8d37f420637871ccacf1b0db10b815ce9af4dd0020a6fdd2ea3a3eeb9585ae
+Contract Address: 0x988E411D1eE2476847241c3983312356daf749f0
