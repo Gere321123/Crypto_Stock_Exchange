@@ -97,15 +97,14 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     }
 
     function buyTokens(uint256 wBTCAmount) external nonReentrant wBitMoreThenZeroAndTheSenderHaveEnough(wBTCAmount) {
-        console.log("Here is it the error");
         uint256 numberOfTokensAffterBuy = i_formulaConstans / (getwBTCBalance() + numberOfVirtualWei);
-        console.log("Here is it the error2");
+
         uint256 tokensToBuy = totalSupply() - numberOfTokensInTheMarcetCap - numberOfTokensAffterBuy;
-        console.log("Here is it the error3");
+
         if (tokensToBuy > balanceOf(address(this))) {
             revert Coin__NotEnoughTokensAvailable();
         }
-        console.log("Here is it the error4");
+
         // Transfer wBTC from buyer to the contract
         bool success = IERC20(wBTCAddress).transferFrom(msg.sender, address(this), wBTCAmount);
         if (!success) {

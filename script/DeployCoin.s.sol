@@ -15,7 +15,7 @@ contract DeployCoin is Script {
         uint8 companyWithdrawalPercentage = 20; // Company withdrawal percentage
         uint8 ownerWithdrawalPercentage = 5; // Owner withdrawal percentage
         uint8 secondOwnerWithdrawalPercentage = 3; // Second owner withdrawal percentage
-        uint256 numberOfVirtualWei = 10000000000000000000; // Example virtual Wei balance, adjust as needed
+        uint256 numberOfVirtualWei = 100000000000000000; // Example virtual Wei balance, adjust as needed
 
         // Start broadcasting transactions
         vm.startBroadcast();
