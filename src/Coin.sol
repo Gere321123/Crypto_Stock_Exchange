@@ -20,8 +20,11 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     error Coin__InsufficientWBTCInContract();
     error Coin__FailedToReceiveWBTC();
 
-    address private constant wBTCAddress = 0x9BE89D2a4cd102D8Fecc6BF9dA793be995C22541; //This wrapper Bitcoin address is for Binance
-    IERC20 public wBTC;
+    event TokensBought(address indexed buyer, uint256 wBTCAmount, uint256 tokenAmount);
+    event TokensSold(address indexed seller, uint256 tokenAmount, uint256 wBTCAmount);
+    event Withdrawal(address indexed account, uint256 amount, string role);
+
+    IERC20 public constant wBTC = IERC20(0x9BE89D2a4cd102D8Fecc6BF9dA793be995C22541); //This wrapper Bitcoin address is for Binance
 
     address private immutable i_owner;
     uint8 private immutable i_OWNERWITHDRAWALPERCENTAGE;
@@ -51,7 +54,6 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         uint256 _i_numberOfVirtualWei
     ) ERC20("CryptoStock", "CS") Ownable(address(this)) {
         i_owner = msg.sender;
-        wBTC = IERC20(wBTCAddress);
 
         i_company = _company;
         companyWithdrawalPercentage = _companyWithdrawalPercentage;
@@ -114,6 +116,8 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         numberOfTokensInTheMarcetCap += tokensToBuy;
 
         adjustPrice();
+
+        emit TokensBought(msg.sender, wBTCAmount, tokensToBuy);
     }
 
     function sellTokens(uint256 _tokenAmount) public nonReentrant {
@@ -149,6 +153,8 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         numberOfTokensInTheMarcetCap -= _tokenAmount;
 
         adjustPrice();
+
+        emit TokensSold(msg.sender, _tokenAmount, wBTCAmountToReturn);
     }
 
     function adjustPrice() internal {
@@ -161,6 +167,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         if (companyCanWithdraw) {
             withdrawMoney(withdrawValueinWei, companyAllreadyWithdrawalThisMany, companyWithdrawalPercentage, i_company);
             companyAllreadyWithdrawalThisMany += int256(withdrawValueinWei);
+            emit Withdrawal(msg.sender, withdrawValueinWei, "Company");
         }
     }
 
@@ -212,6 +219,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
                 withdrawValueinWei, int256(ownerAllreadyWithdrawalThisMany), i_OWNERWITHDRAWALPERCENTAGE, i_owner
             );
             ownerAllreadyWithdrawalThisMany += withdrawValueinWei;
+            emit Withdrawal(msg.sender, withdrawValueinWei, "Owner");
         } else {
             if (msg.sender == i_secondowner) {
                 withdrawMoney(
@@ -221,6 +229,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
                     i_secondowner
                 );
                 secondownerAllreadyWithdrawalThisMany += withdrawValueinWei;
+                emit Withdrawal(msg.sender, withdrawValueinWei, "Second Owner");
             } else {
                 revert Coin__NotAuthorized();
             }
