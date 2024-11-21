@@ -6,18 +6,14 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
-import {console} from "forge-std/console.sol";
 
 contract Coin is ERC20, Ownable, ReentrancyGuard {
     error Coin__MustBeMoreThanZero();
     error Coin__NotEnoughTokensAvailable();
     error Coin__InsufficientTokens();
-    error Coin__InsufficientBITInContract();
-    error Coin__FailedToSendBIT();
     error Coin__NotAuthorized();
     error Coin__CompanyWantsToWithdrawMoreMoneyThanAllowed();
     error Coin__BurnMoreThanTheTokensInTheMarcatCap();
-    error Coin__bitBalanceMustBeMoreThanZero();
     error Coin__InsufficientWBTC();
     error Coin__WBTCTransferFailed();
     error Coin__FailedToSendWBTC();
@@ -55,6 +51,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         uint256 _i_numberOfVirtualWei
     ) ERC20("CryptoStock", "CS") Ownable(address(this)) {
         i_owner = msg.sender;
+        wBTC = IERC20(wBTCAddress);
 
         i_company = _company;
         companyWithdrawalPercentage = _companyWithdrawalPercentage;
@@ -76,6 +73,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         }
         _;
     }
+    // Only the owner or the secendOwner or the company
 
     modifier onlyAuthorized() {
         if (!(msg.sender == i_owner || msg.sender == i_secondowner || msg.sender == i_company)) {
@@ -89,7 +87,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
             revert Coin__MustBeMoreThanZero();
         }
 
-        uint256 senderWBTCBalance = IERC20(wBTCAddress).balanceOf(msg.sender);
+        uint256 senderWBTCBalance = wBTC.balanceOf(msg.sender);
         if (senderWBTCBalance < wBTCAmount) {
             revert Coin__InsufficientWBTC();
         }
@@ -106,7 +104,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         }
 
         // Transfer wBTC from buyer to the contract
-        bool success = IERC20(wBTCAddress).transferFrom(msg.sender, address(this), wBTCAmount);
+        bool success = wBTC.transferFrom(msg.sender, address(this), wBTCAmount);
         if (!success) {
             revert Coin__WBTCTransferFailed();
         }
@@ -127,13 +125,13 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         if (userBalance < _tokenAmount) {
             revert Coin__InsufficientTokens();
         }
+        uint256 contractwBTCBalance = getwBTCBalance();
 
         // Calculate the amount of wBTC to return
         uint256 numberOfWeiAfterSell = i_formulaConstans / (totalSupply() - numberOfTokensInTheMarcetCap + _tokenAmount);
-        uint256 wBTCAmountToReturn = getwBTCBalance() + numberOfVirtualWei - numberOfWeiAfterSell;
+        uint256 wBTCAmountToReturn = contractwBTCBalance + numberOfVirtualWei - numberOfWeiAfterSell;
 
         // Check if the contract has enough wBTC
-        uint256 contractwBTCBalance = IERC20(wBTCAddress).balanceOf(address(this));
         if (contractwBTCBalance < wBTCAmountToReturn) {
             revert Coin__InsufficientWBTCInContract();
         }
@@ -142,7 +140,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         _transfer(msg.sender, address(this), _tokenAmount);
 
         // Transfer wBTC to the seller
-        bool success = IERC20(wBTCAddress).transfer(msg.sender, wBTCAmountToReturn);
+        bool success = wBTC.transfer(msg.sender, wBTCAmountToReturn);
         if (!success) {
             revert Coin__FailedToSendWBTC();
         }
@@ -173,7 +171,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         wBitMoreThenZeroAndTheSenderHaveEnough(wBTCAmount)
     {
         // Transfer wBTC from the caller to the contract
-        bool success = IERC20(wBTCAddress).transferFrom(msg.sender, address(this), wBTCAmount);
+        bool success = wBTC.transferFrom(msg.sender, address(this), wBTCAmount);
         if (!success) {
             revert Coin__FailedToReceiveWBTC();
         }
@@ -247,7 +245,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         }
 
         // Transfer wBTC to the specified address
-        bool success = IERC20(wBTCAddress).transfer(_to, withdrawValueInWBTC);
+        bool success = wBTC.transfer(_to, withdrawValueInWBTC);
         if (!success) {
             revert Coin__FailedToSendWBTC();
         }
@@ -257,8 +255,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     }
 
     function getwBTCBalance() public view returns (uint256) {
-        uint256 balance = IERC20(wBTCAddress).balanceOf(address(this));
-        return balance;
+        return wBTC.balanceOf(address(this));
     }
 
     function getwBTCBalanceNotZero() public view returns (uint256) {
@@ -308,10 +305,6 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
 
     function getValueOfOneTokenInWei() public view returns (uint256) {
         return valueOfOneTokenInWei;
-    }
-
-    function getContractWeiBalance() public view returns (uint256) {
-        return address(this).balance;
     }
 
     function getownerAllreadyWithdrawalThisMany() public view returns (uint256) {
