@@ -22,7 +22,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
 
     event TokensBought(address indexed buyer, uint256 wBTCAmount, uint256 tokenAmount);
     event TokensSold(address indexed seller, uint256 tokenAmount, uint256 wBTCAmount);
-    event Withdrawal(address indexed account, uint256 amount, string role);
+    event Withdrawal(address indexed account, uint256 amount);
 
     IERC20 public constant wBTC = IERC20(0x9BE89D2a4cd102D8Fecc6BF9dA793be995C22541); //This wrapper Bitcoin address is for Binance
 
@@ -167,7 +167,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         if (companyCanWithdraw) {
             withdrawMoney(withdrawValueinWei, companyAllreadyWithdrawalThisMany, companyWithdrawalPercentage, i_company);
             companyAllreadyWithdrawalThisMany += int256(withdrawValueinWei);
-            emit Withdrawal(msg.sender, withdrawValueinWei, "Company");
+            emit Withdrawal(msg.sender, withdrawValueinWei);
         }
     }
 
@@ -219,7 +219,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
                 withdrawValueinWei, int256(ownerAllreadyWithdrawalThisMany), i_OWNERWITHDRAWALPERCENTAGE, i_owner
             );
             ownerAllreadyWithdrawalThisMany += withdrawValueinWei;
-            emit Withdrawal(msg.sender, withdrawValueinWei, "Owner");
+            emit Withdrawal(msg.sender, withdrawValueinWei);
         } else {
             if (msg.sender == i_secondowner) {
                 withdrawMoney(
@@ -229,7 +229,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
                     i_secondowner
                 );
                 secondownerAllreadyWithdrawalThisMany += withdrawValueinWei;
-                emit Withdrawal(msg.sender, withdrawValueinWei, "Second Owner");
+                emit Withdrawal(msg.sender, withdrawValueinWei);
             } else {
                 revert Coin__NotAuthorized();
             }
