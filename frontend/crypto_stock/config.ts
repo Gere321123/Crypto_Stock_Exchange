@@ -1,19 +1,17 @@
-import { http, createConfig } from '@wagmi/vue'
-import { base, mainnet, optimism } from '@wagmi/vue/chains'
-import { injected, metaMask, safe, walletConnect } from '@wagmi/vue/connectors'
+import { createConfig, http } from '@wagmi/vue';
+import { bscTestnet } from '@wagmi/vue/chains'; // Import the BNB Testnet chain
+import { injected, metaMask, walletConnect } from '@wagmi/vue/connectors';
 
-const projectId = '0x34A1D3fff3958843C43aD80F30b94c510645C316'
+const projectId = '0x988E411D1eE2476847241c3983312356daf749f0';
 
 export const config = createConfig({
-  chains: [mainnet, base],
   connectors: [
     injected(),
-    walletConnect({ projectId }),
     metaMask(),
-    safe(),
+    walletConnect({ projectId }),
   ],
+  chains: [bscTestnet], // Use the BNB Testnet chain
   transports: {
-    [mainnet.id]: http(),
-    [base.id]: http(),
+    [bscTestnet.id]: http(), // Add transport for BNB Testnet
   },
-})
+});
