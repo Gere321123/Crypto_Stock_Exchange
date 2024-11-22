@@ -6,7 +6,7 @@
     <div class="transaction-section">
       <button @click="toggleBuy">Buy Tokens</button>
       <button @click="toggleSell">Sell Tokens</button>
-
+      <button @click="getvalue">Value</button>
       <!-- Buy Input -->
       <div v-if="showBuy">
         <label>ETH to spend:</label>
@@ -33,6 +33,9 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from 'vue';
 import Connect from './Connect.vue';
+import { useReadContract } from '@wagmi/vue'
+import { abi } from '../abi'
+import { config } from '../../config'
 
 export default defineComponent({
   name: 'PriceChangingComponent',
@@ -53,6 +56,32 @@ export default defineComponent({
     const ethToReceive = ref(0);
     const priceCanvas = ref<HTMLCanvasElement | null>(null);
     const connectComponent = ref();
+
+  const { data, isError, isLoading, error } = useReadContract({
+    abi,
+    address: '0x988E411D1eE2476847241c3983312356daf749f0',
+    functionName: 'totalSupply',
+    config: config
+  });
+  // Method to log the contract value
+  const getvalue = async () => {
+    try {
+      console.log('Loading data...');
+      while (isLoading.value) {
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for 100ms
+      }
+
+      if (isError.value) {
+        console.error('Error reading contract:', error.value);
+      } else if (data.value) {
+        console.log('Value of one token in Wei:', data.value.toString());
+      } else {
+        console.log('No data available');
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  };
 
     const drawPriceChanges = () => {
       if (priceCanvas.value) {
@@ -115,6 +144,7 @@ export default defineComponent({
       ethToReceive,
       priceCanvas,
       toggleBuy,
+      getvalue,
       toggleSell,
       calculateTokens,
       calculateEth,
