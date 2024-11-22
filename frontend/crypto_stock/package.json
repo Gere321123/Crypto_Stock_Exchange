@@ -15,9 +15,11 @@
     "@type_of/use-wagmi-contracts": "^0.0.12",
     "@wagmi/vue": "latest",
     "axios": "^1.7.7",
+    "ethers": "^6.13.4",
     "viem": "latest",
     "vue": ">=3.4.21",
-    "vue-router": "^4.4.5"
+    "vue-router": "^4.4.5",
+    "wagmi": "^2.13.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",

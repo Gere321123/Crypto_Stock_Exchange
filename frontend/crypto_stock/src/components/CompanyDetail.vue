@@ -1,6 +1,5 @@
 <template>
   <div class="company-detail">
-    <!-- Pass the loaded company data to MainSiteForCompanies -->
     <MainSiteForCompanies :company="company" />
     <PriceChangingComponent :company="company" />
   </div>
@@ -9,9 +8,20 @@
 <script>
 import MainSiteForCompanies from './MainSiteForCompanies.vue';
 import PriceChangingComponent from './PriceChangingComponent.vue';
+import { useReadContract } from '@wagmi/vue'
+import { abi } from '../abi'
 
 export default {
   name: 'CompanyDetail',
+  setup() {
+    const result = useReadContract({
+      abi,
+      address: '0x988E411D1eE2476847241c3983312356daf749f0',
+      functionName: 'getValueOfOneTokenInWei',
+    })
+    console.log(result);
+  }
+    ,
   components: {
     MainSiteForCompanies,
     PriceChangingComponent
