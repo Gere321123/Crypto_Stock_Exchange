@@ -34,7 +34,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     uint256 private secondownerAllreadyWithdrawalThisMany = 0;
 
     uint256 private valueOfOneTokenInWei;
-    uint256 private numberOfVirtualWei;
+    int256 private numberOfVirtualWei;
     uint256 private immutable i_formulaConstans;
 
     address private immutable i_company;
@@ -60,12 +60,12 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         i_SECONDOWNERWITHDRAWALPERCENTAGE = _i_SECONDOWNERWITHDRAWALPERCENTAGE;
         i_OWNERWITHDRAWALPERCENTAGE = _i_OWNERWITHDRAWALPERCENTAGE;
         i_secondowner = _i_secondowner;
-        numberOfVirtualWei = _i_numberOfVirtualWei;
+        numberOfVirtualWei = int256(_i_numberOfVirtualWei);
 
         _mint(address(this), _numberOfTokens * (10 ** decimals()));
 
-        valueOfOneTokenInWei = numberOfVirtualWei * (10 ** decimals()) / totalSupply();
-        i_formulaConstans = numberOfVirtualWei * totalSupply();
+        valueOfOneTokenInWei = _i_numberOfVirtualWei * (10 ** decimals()) / totalSupply();
+        i_formulaConstans = _i_numberOfVirtualWei * totalSupply();
     }
 
     // Modifier to check if the caller is the company
@@ -97,7 +97,14 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     }
 
     function buyTokens(uint256 wBTCAmount) external nonReentrant wBitMoreThenZeroAndTheSenderHaveEnough(wBTCAmount) {
-        uint256 numberOfTokensAffterBuy = i_formulaConstans / (getwBTCBalance() + numberOfVirtualWei);
+        uint256 numberOfTokensAffterBuy;
+
+        if (numberOfVirtualWei >= 0) {
+            numberOfTokensAffterBuy = i_formulaConstans / (getwBTCBalance() + uint256(numberOfVirtualWei));
+        } else {
+            uint256 adjustedBalance = getwBTCBalance() - uint256(-numberOfVirtualWei);
+            numberOfTokensAffterBuy = i_formulaConstans / adjustedBalance;
+        }
 
         uint256 tokensToBuy = totalSupply() - numberOfTokensInTheMarcetCap - numberOfTokensAffterBuy;
 
@@ -133,7 +140,15 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
 
         // Calculate the amount of wBTC to return
         uint256 numberOfWeiAfterSell = i_formulaConstans / (totalSupply() - numberOfTokensInTheMarcetCap + _tokenAmount);
-        uint256 wBTCAmountToReturn = contractwBTCBalance + numberOfVirtualWei - numberOfWeiAfterSell;
+        uint256 wBTCAmountToReturn;
+        if (numberOfVirtualWei >= 0) {
+            // If numberOfVirtualWei is positive, add it directly
+            wBTCAmountToReturn = contractwBTCBalance + uint256(numberOfVirtualWei) - numberOfWeiAfterSell;
+        } else {
+            // If numberOfVirtualWei is negative, subtract its absolute value
+            uint256 adjustedBalance = contractwBTCBalance - uint256(-numberOfVirtualWei);
+            wBTCAmountToReturn = adjustedBalance - numberOfWeiAfterSell;
+        }
 
         // Check if the contract has enough wBTC
         if (contractwBTCBalance < wBTCAmountToReturn) {
@@ -158,8 +173,14 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     }
 
     function adjustPrice() internal {
-        valueOfOneTokenInWei = (numberOfVirtualWei + getwBTCBalance()) * (10 ** decimals())
-            / (totalSupply() - numberOfTokensInTheMarcetCap);
+        uint256 adjustedBalance;
+
+        if (numberOfVirtualWei >= 0) {
+            adjustedBalance = getwBTCBalance() + uint256(numberOfVirtualWei);
+        } else {
+            adjustedBalance = getwBTCBalance() - uint256(-numberOfVirtualWei);
+        }
+        valueOfOneTokenInWei = adjustedBalance * (10 ** decimals()) / (totalSupply() - numberOfTokensInTheMarcetCap);
     }
 
     // Withdraw BIT function for the company
@@ -186,13 +207,18 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         uint256 bitBalance = getwBTCBalanceNotZero();
 
         // Calculate tokens after the burn
-        uint256 tokensAfterBurn = i_formulaConstans / (bitBalance + numberOfVirtualWei);
+        uint256 tokensAfterBurn;
+        if (numberOfVirtualWei >= 0) {
+            tokensAfterBurn = bitBalance + uint256(numberOfVirtualWei);
+        } else {
+            tokensAfterBurn = bitBalance - uint256(-numberOfVirtualWei);
+        }
 
         // Burn excess tokens
         burn(totalSupply() - numberOfTokensInTheMarcetCap - tokensAfterBurn);
 
         // Adjust numberOfVirtualWei based on the wBTC uploaded
-        numberOfVirtualWei += (wBTCAmount * numberOfVirtualWei) / (bitBalance - wBTCAmount);
+        numberOfVirtualWei += (numberOfVirtualWei * int256(wBTCAmount)) / int256(bitBalance - wBTCAmount);
 
         // Update company withdrawal tracker
         companyAllreadyWithdrawalThisMany -= int256(wBTCAmount);
@@ -204,12 +230,23 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     function changePrice(uint256 valueinWei) internal {
         uint256 bitBalance = getwBTCBalanceNotZero();
 
-        uint256 tokensAfftherMint = i_formulaConstans / (bitBalance + numberOfVirtualWei);
-        uint256 numberOfmint = tokensAfftherMint - (totalSupply() - numberOfTokensInTheMarcetCap);
-        mint(numberOfmint);
+        uint256 tokensAfterMint;
 
-        uint256 burnVirtualBit = (valueinWei * numberOfVirtualWei) / (bitBalance + valueinWei);
-        numberOfVirtualWei -= burnVirtualBit;
+        if (numberOfVirtualWei >= 0) {
+        } else {
+            tokensAfterMint = i_formulaConstans / bitBalance - uint256(-numberOfVirtualWei);
+        }
+
+        uint256 numberOfMint;
+        numberOfMint = tokensAfterMint - (totalSupply() - numberOfTokensInTheMarcetCap);
+        mint(numberOfMint);
+
+        int256 burnVirtualBit = (int256(valueinWei) * numberOfVirtualWei) / int256(bitBalance + valueinWei);
+        if (burnVirtualBit < 0) {
+            numberOfVirtualWei += burnVirtualBit;
+        } else {
+            numberOfVirtualWei -= burnVirtualBit;
+        }
         adjustPrice();
     }
 
