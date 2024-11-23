@@ -60,7 +60,7 @@ export default defineComponent({
   const { data, isError, isLoading, error } = useReadContract({
     abi,
     address: '0x988E411D1eE2476847241c3983312356daf749f0',
-    functionName: 'totalSupply',
+    functionName: 'getValueOfOneTokenInWei',
     config: config
   });
   // Method to log the contract value

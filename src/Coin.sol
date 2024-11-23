@@ -235,7 +235,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         if (numberOfVirtualWei >= 0) {
             tokensAfterMint = i_formulaConstans / (bitBalance + uint256(numberOfVirtualWei));
         } else {
-            tokensAfterMint = i_formulaConstans / bitBalance - uint256(-numberOfVirtualWei);
+            tokensAfterMint = i_formulaConstans / (bitBalance - uint256(-numberOfVirtualWei));
         }
 
         uint256 numberOfMint;
