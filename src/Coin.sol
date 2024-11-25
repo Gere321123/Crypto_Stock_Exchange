@@ -98,11 +98,13 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
 
     function buyTokens(uint256 wBTCAmount) external nonReentrant wBitMoreThenZeroAndTheSenderHaveEnough(wBTCAmount) {
         uint256 numberOfTokensAffterBuy;
+        uint256 liqviditywBTCAmount = wBTCAmount - (wBTCAmount / 10000);
 
         if (numberOfVirtualWei >= 0) {
-            numberOfTokensAffterBuy = i_formulaConstans / (getwBTCBalance() + uint256(numberOfVirtualWei));
+            numberOfTokensAffterBuy =
+                i_formulaConstans / (getwBTCBalance() + uint256(numberOfVirtualWei) + liqviditywBTCAmount);
         } else {
-            uint256 adjustedBalance = getwBTCBalance() - uint256(-numberOfVirtualWei);
+            uint256 adjustedBalance = getwBTCBalance() - uint256(-numberOfVirtualWei) + liqviditywBTCAmount;
             numberOfTokensAffterBuy = i_formulaConstans / adjustedBalance;
         }
 
