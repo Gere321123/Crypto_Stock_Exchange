@@ -1,43 +1,40 @@
 # Crypto Stock Exchange
 
-**Crypto Stock Exchange** is a startup aimed at revolutionizing how companies raise funds from investors. Our platform enables companies to tokenize their equity and offer it to investors in a cost-effective manner. Unlike traditional stock markets, where listing can cost at least €100,000 in Eastern European countries, our solution is much more affordable.
+**Crypto Stock Exchange** is a startup revolutionizing how companies raise funds from investors. Our platform enables companies to tokenize their equity using **Wrapped Bitcoin (WBTC)**, offering a cost-effective alternative to traditional stock markets. In many Eastern European countries, listing on traditional stock markets can cost at least €100,000, whereas our solution is far more affordable.
 
 ## Key Features
 
-1. **Affordable Tokenization:** Companies can tokenize their equity at a fraction of the cost of traditional stock markets.
-2. **Decentralized Dividends:** Investors earn dividends if companies generate profits. This creates transparency and aligns incentives between companies and their investors.
-3. **Stable Crypto Ecosystem:** 
-   - Initially, our platform was based on Ethereum.
-   - We are transitioning to **RSK** to utilize Bitcoin for increased stability, as Bitcoin has a larger market capitalization and is expected to provide long-term reliability.
+1. **Affordable Tokenization:** Companies can tokenize their equity at a fraction of the cost compared to traditional stock markets.
+2. **Decentralized Dividends:** Investors earn dividends when companies generate profits, promoting transparency and aligning incentives between businesses and their backers.
+3. **Stable Crypto Ecosystem:**
+   - The platform leverages **Wrapped Bitcoin (WBTC)** for tokenized equity.
+   - Using Bitcoin-backed assets provides stability, as Bitcoin’s larger market capitalization offers long-term reliability.
 
-## Why Use Bitcoin Instead of Ethereum?
+## Why Use Wrapped Bitcoin Instead of Ethereum?
 
-- **Market Stability:** Bitcoin's larger market cap makes it less volatile compared to Ethereum.
-- **Investor Confidence:** With more liquidity in Bitcoin, investors are likely to feel more secure.
-- **Global Wealth Allocation:** Around 1% of all global money is currently in Bitcoin. This demonstrates significant trust and adoption in Bitcoin's ecosystem.
-- **BlackRock's Role:** BlackRock, one of the most powerful financial companies globally, owns approximately 10% of all Bitcoin. BlackRock played a critical role in stabilizing the U.S. economy during the 2008 financial crisis. With their substantial Bitcoin holdings, they are likely to work towards increasing Bitcoin's value, further stabilizing and boosting its adoption.
+- **Market Stability:** Bitcoin’s significantly larger market cap reduces volatility compared to Ethereum.
+- **Investor Confidence:** Greater liquidity in Bitcoin makes investors feel more secure.
+- **Global Wealth Allocation:** Bitcoin represents approximately 1% of all global money, showcasing high trust and adoption.
+- **Institutional Support:** Major institutions like BlackRock hold a substantial portion of Bitcoin (around 10%), and their interest in Bitcoin supports stability and long-term growth.
 
 ## What Happens If a Company Fails to Pay Dividends?
 
-The **Crypto Stock Exchange** enforces strict rules to ensure investor trust:
-- Companies that fail to pay dividends when required lose access to their tokenized stocks. 
-- This means they are unable to withdraw any funds from their tokenized equity, creating strong accountability and ensuring that companies prioritize investor returns.
+To ensure investor trust, the **Crypto Stock Exchange** enforces strict accountability measures:
+- Companies that fail to pay dividends when required lose access to their tokenized stocks.
+- They are unable to withdraw any funds from their tokenized equity, compelling companies to prioritize investor returns.
 
 ## Simple Stock Price Adjustment Formula
 
-To maintain a dynamic and fair market, we have implemented a **simple formula similar to Uniswap's automated market maker model** for determining stock prices:
+To create a dynamic and fair market, we utilize a **price adjustment formula inspired by Uniswap’s automated market maker model**:
 - Stock prices adjust automatically based on supply and demand.
-- This ensures liquidity and enables real-time price discovery, making our platform efficient and transparent.
+- This ensures liquidity and enables real-time price discovery, fostering a transparent and efficient marketplace.
 
-## Project Development Status
+## Development Status
 
-The project is currently in its early stages, and the platform is being rewritten to work on **RSK**, a smart contract platform powered by Bitcoin.
+The project is in its early stages, with the platform deployed on the **Binance Smart Chain (BSC) testnet** using **Wrapped Bitcoin (WBTC)**. We continue to improve the platform and welcome feedback from the community to make **Crypto Stock Exchange** the preferred platform for decentralized fundraising.
 
 ---
 
-We are excited to continue improving and welcome feedback from the community to make **Crypto Stock Exchange** the go-to platform for decentralized fundraising.
+## Test the Contract on Binance Smart Chain (BSC) Testnet
 
-## To test the contract in BNB testnet:
-
-Hash: 0x5a8d37f420637871ccacf1b0db10b815ce9af4dd0020a6fdd2ea3a3eeb9585ae
-Contract Address: 0x988E411D1eE2476847241c3983312356daf749f0
+- **Contract Address:** `0x988E411D1eE2476847241c3983312356daf749f0`
