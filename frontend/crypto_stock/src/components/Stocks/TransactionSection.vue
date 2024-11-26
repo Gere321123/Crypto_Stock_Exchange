@@ -15,9 +15,17 @@
       <p>Price in USD: {{ company[17] }} $</p>
     </div>
     </div>
+    <div class="price-container">
     <div class="price-box">
       <p>Market Cap: {{ company[13] }} $</p>
     </div>
+    <div class="price-box">
+      <p>Number Of Tokens: {{ company[10] }} </p>
+    </div>
+    <div class="price-box">
+      <p>Number Of Available Tokens: {{ company[14] }} </p>
+    </div>
+  </div>
     <button @click="toggleBuy">Buy Tokens</button>
     <button @click="toggleSell">Sell Tokens</button>
     <button @click="getvalue">Value</button>
