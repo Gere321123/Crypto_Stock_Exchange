@@ -4,9 +4,9 @@
      <img :src="company[6]" alt="Company Wallpaper" />
     </a>
   <br>
-    <a v-if="company[2]" :href="company[9]" target="_blank" rel="noopener noreferrer">
-      <h2>{{ company[2] }}</h2>
-    </a>
+  <a v-if="company[2]" :href="company[9]" target="_blank" rel="noopener noreferrer" class="company-link">
+  <h2>{{ company[2] }}</h2>
+  </a>
     <div class="price-container">
     <div class="price-box">
       <p>Price in BIT: {{ company[16] }} BIT</p>
@@ -15,7 +15,9 @@
       <p>Price in USD: {{ company[17] }} $</p>
     </div>
     </div>
-
+    <div class="price-box">
+      <p>Market Cap: {{ company[13] }} $</p>
+    </div>
     <button @click="toggleBuy">Buy Tokens</button>
     <button @click="toggleSell">Sell Tokens</button>
     <button @click="getvalue">Value</button>
@@ -182,6 +184,15 @@ input {
   text-align: center; /* Center text inside the box */
   flex: 1; /* Ensure boxes have equal width */
   margin: 5px
+}
+.company-link {
+  text-decoration: none; /* Remove the underline and typical link styling */
+  color: inherit;
+}
+
+.company-link h2 {
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Optional: Remove padding if needed */
 }
 
 </style>
