@@ -15,14 +15,15 @@ def init_db():
         cursor = conn.cursor()
         
         cursor.execute('''CREATE TABLE IF NOT EXISTS user (
-                         id INTEGER PRIMARY KEY AUTOINCREMENT,
-                         username TEXT UNIQUE NOT NULL,
-                         password TEXT NOT NULL,
-                         isadmin BOOLEAN NOT NULL CHECK (isadmin IN (0, 1)))''')
+                   id INTEGER PRIMARY KEY AUTOINCREMENT,
+                   username TEXT UNIQUE NOT NULL,
+                   password TEXT NOT NULL,
+                   who TEXT NOT NULL)''')
+
         cursor.execute('''
-        INSERT OR IGNORE INTO user (username, password, isadmin)
+        INSERT OR IGNORE INTO user (username, password, who)
         VALUES (?, ?, ?)
-        ''', ("admin", haspassword, 1)) 
+        ''', ("admin", haspassword, "admin")) 
 
         cursor.execute('''CREATE TABLE IF NOT EXISTS stock (
                          id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -78,7 +79,7 @@ def register():
     data = request.json
     username = data.get("username")
     password = data.get("password")
-    is_admin = data.get("is_admin", False)
+    who = data.get("who", "company")
 
     # Check if username or password is missing
     if not username or not password:
@@ -88,8 +89,8 @@ def register():
         cursor = conn.cursor()
         try:
             # Insert the new user into the database
-            cursor.execute("INSERT INTO user (username, password, isadmin) VALUES (?, ?, ?)", 
-                           (username, generate_password_hash(password), is_admin))
+            cursor.execute("INSERT INTO user (username, password, who) VALUES (?, ?, ?)", 
+                           (username, generate_password_hash(password), who))
             conn.commit()
         except sqlite3.IntegrityError:
             # Return error if the username already exists
@@ -111,11 +112,11 @@ def login():
 
     with sqlite3.connect("cryptostock.db") as conn:
         cursor = conn.cursor()
-        cursor.execute("SELECT password, isadmin FROM user WHERE username = ?", (username,))
+        cursor.execute("SELECT password, who FROM user WHERE username = ?", (username,))
         record = cursor.fetchone()
         if record and check_password_hash(record[0], password):
             session['user'] = username
-            session['isadmin'] = bool(record[1])
+            session['who'] = record[1]
             return jsonify({"message": "Login successful"}), 200
         return jsonify({"message": "Invalid credentials"}), 401
 
