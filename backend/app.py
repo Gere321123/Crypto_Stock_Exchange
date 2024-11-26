@@ -44,6 +44,7 @@ def init_db():
                          available_coins INTEGER,
                          total_supply INTEGER,
                          price REAL,
+                         priceinUSD REAL,
                          start_date TEXT,                   -- Store as a date string in ISO format
                          eth_balance REAL,
 

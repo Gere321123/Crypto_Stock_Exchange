@@ -1,14 +1,27 @@
 <template>
   <div class="transaction-section">
-    <img v-if="company[6]" :src="company[6]" alt="Company Wallpaper" />
-    <br>
-    <h2>{{ company[2] }}</h2>
+    <a v-if="company[6]" :href="company[9]" target="_blank" rel="noopener noreferrer">
+     <img :src="company[6]" alt="Company Wallpaper" />
+    </a>
+  <br>
+    <a v-if="company[2]" :href="company[9]" target="_blank" rel="noopener noreferrer">
+      <h2>{{ company[2] }}</h2>
+    </a>
+    <div class="price-container">
+    <div class="price-box">
+      <p>Price in BIT: {{ company[16] }} BIT</p>
+    </div>
+    <div class="price-box">
+      <p>Price in USD: {{ company[17] }} $</p>
+    </div>
+    </div>
+
     <button @click="toggleBuy">Buy Tokens</button>
     <button @click="toggleSell">Sell Tokens</button>
     <button @click="getvalue">Value</button>
     <!-- Buy Input -->
     <div v-if="showBuy">
-      <label>ETH to spend:</label>
+      <label>BIT to spend:</label>
       <input v-model="ethAmount" type="number" @input="calculateTokens" placeholder="Enter ETH amount" />
       <p>You will receive: {{ tokensToReceive }} tokens</p>
     </div>
@@ -17,7 +30,7 @@
     <div v-if="showSell">
       <label>Tokens to sell:</label>
       <input v-model="tokensAmount" type="number" @input="calculateEth" placeholder="Enter tokens amount" />
-      <p>You will receive: {{ ethToReceive }} ETH</p>
+      <p>You will receive: {{ ethToReceive }} BIT</p>
     </div>
 
     <!-- Connect Wallet Button -->
@@ -132,7 +145,7 @@ export default defineComponent({
 .transaction-section {
   flex: 1 1 25%;
   position: static; /* Avoids fixed positioning for better responsiveness */
-  background-color: #000000;
+  background-color: #191919;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin: 20px;
@@ -156,4 +169,19 @@ input {
   padding: 5px;
   width: 80%;
 }
+.price-container {
+  display: flex; /* Align items in a row */
+  gap: 10px; /* Add spacing between the boxes */
+  margin-top: 20px; /* Add some spacing from other elements */
+}
+
+.price-box {
+  background-color: #111111; /* Light gray background for contrast */
+  border: 1px solid #313131; /* Light border for a subtle effect */
+  border-radius: 5px; /* Rounded corners for a modern look */
+  text-align: center; /* Center text inside the box */
+  flex: 1; /* Ensure boxes have equal width */
+  margin: 5px
+}
+
 </style>
