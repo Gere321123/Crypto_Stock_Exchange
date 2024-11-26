@@ -25,6 +25,10 @@
           <input type="text" v-model="url" required />
         </div>
         <div>
+          <label for="url">Network:</label>
+          <input type="text" v-model="network" required />
+        </div>
+        <div>
           <label for="companyname">Company Name:</label>
           <input type="text" v-model="companyname" required />
         </div>
@@ -74,8 +78,8 @@
           <input type="number" v-model="number_of_stock" required />
         </div>
         <div>
-          <label for="virtual_eth">Virtual-Eth:</label>
-          <input type="number" v-model="virtual_eth" required />
+          <label for="virtual_Bit">Virtual-Bit:</label>
+          <input type="number" v-model="virtual_Bit" required />
         </div>
         <button type="submit">Create Stock</button>
       </form>
@@ -99,6 +103,7 @@ export default {
   data() {
     return {
       url: '',
+      network: '',
       companyname: '',
       description: '',
       long_description: '',
@@ -106,7 +111,7 @@ export default {
       wallpaper_url: '',
       website: '',
       number_of_stock: null,
-      virtual_eth: 0,
+      virtual_Bit: 0,
       username: '',
       password: '',   // Added to capture password
       other_pictures: [],  // Array for other pictures URLs
@@ -143,6 +148,7 @@ export default {
     async createStock() {
       const stockData = {
         url: this.url,
+        network: this.network,
         companyname: this.companyname,
         description: this.description,
         long_description: this.long_description,
@@ -152,7 +158,7 @@ export default {
         annual_demand: this.annual_demand,    // Pass array as JSON
         website: this.website,
         number_of_stock: this.number_of_stock,
-        virtual_eth: this.virtual_eth,
+        virtual_Bit: this.virtual_Bit,
         username: this.username
       };
 
@@ -181,6 +187,7 @@ export default {
     },
     resetForm() {
       this.url = '';
+      this.network = '';
       this.companyname = '';
       this.description = '';
       this.long_description = '';
@@ -190,7 +197,7 @@ export default {
       this.annual_demand = [];
       this.website = '';
       this.number_of_stock = null;
-      this.virtual_eth = 0;
+      this.virtual_Bit = 0;
       this.username = '';
       this.password = '';
     }
