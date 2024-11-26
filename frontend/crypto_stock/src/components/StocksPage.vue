@@ -17,7 +17,7 @@
     <p v-if="message">{{ message }}</p>
 
     <!-- Only show stock creation form if registration is successful -->
-    <div v-if="isRegistered">
+    <div >
       <h2>Create a Stock Item</h2>
       <form @submit.prevent="createStock">
         <div>
@@ -85,6 +85,16 @@
       </form>
     </div>
 
+    <div>
+    <h3>Existing Users</h3>
+    <ul>
+      <li v-for="user in users" :key="user[0]">
+        {{ user[0] }} - {{ user[1] }}
+        <button>Delete</button>
+      </li>
+    </ul>
+  </div>
+
   <div>
     <h3>Existing Stocks</h3>
     <ul>
@@ -119,12 +129,13 @@ export default {
       other_pictures: [],  // Array for other pictures URLs
       annual_demand: [],   // Array for annual demand values
       stocks: [],
-      isRegistered: false, // Flag to check if registration is complete
+      users:[],
       message: '',         // Message for registration status
     };
   },
  mounted() {
   this.fetchStocks();
+  this.fetchUsers();
   },
   methods: {
     async fetchStocks() {
@@ -132,6 +143,15 @@ export default {
         const response = await fetch('http://localhost:5000/stocks');
         const data = await response.json();
         this.stocks = data.stocks; 
+      } catch (error) {
+        console.error('Error fetching stocks:', error);
+      }
+    },
+    async fetchUsers() {
+      try {
+        const response = await fetch('http://localhost:5000/users');
+        const data = await response.json();
+        this.users = data.users; 
       } catch (error) {
         console.error('Error fetching stocks:', error);
       }
@@ -173,7 +193,6 @@ export default {
           is_admin: false,  // Regular user, not an admin
       });
       this.message = response.data.message || "Registration successful! You can now create a stock.";
-      this.isRegistered = true; // Set flag to show stock creation form
   } catch (error) {
       this.message = error.response ? error.response.data.message : "An error occurred.";
   }

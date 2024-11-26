@@ -47,3 +47,15 @@ def login():
 def logout():
     session.clear()
     return jsonify({"message": "Logged out successfully"}), 200
+
+@auth_bp.route('/users', methods=['GET'])
+def get_users():
+    with sqlite3.connect("cryptostock.db") as conn:
+        cursor = conn.cursor()
+        try:
+            cursor.execute("SELECT username, who FROM user")
+            users = cursor.fetchall()
+            return jsonify({"users": users}), 200
+        except Exception as e:
+            return jsonify({"message": "An error occurred while retrieving users.", "error": str(e)}), 500
+
