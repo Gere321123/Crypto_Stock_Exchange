@@ -1,8 +1,8 @@
 <template>
   <div class="company-detail">
     <PriceChangingComponent :company="company" />
-  </div>
     <TransactionSection :company="company"/>
+  </div>
 
 </template>
 
@@ -43,6 +43,8 @@ export default {
 .company-detail {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
   color: #ffffff;
+  flex-wrap: wrap; /* Allows wrapping when the screen is small */
 }
 </style>

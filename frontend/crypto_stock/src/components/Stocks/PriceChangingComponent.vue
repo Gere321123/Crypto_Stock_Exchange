@@ -25,9 +25,6 @@ export default defineComponent({
     const ethToReceive = ref(0);
     const priceCanvas = ref<HTMLCanvasElement | null>(null);
     
-
- 
-
     const drawPriceChanges = () => {
       if (priceCanvas.value) {
         const ctx = priceCanvas.value.getContext('2d');
@@ -63,27 +60,14 @@ export default defineComponent({
 
 <style scoped>
 .price-changing-component {
-  width: 70%;
+  flex: 1 1 70%; /* Flex-grow, flex-shrink, and base width */
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #1f1f1f;
   padding: 20px;
   color: rgb(124, 124, 124);
-  margin-left: 30px;
-  margin-top: 20px;
-
-}
-
-.transaction-section {
-  position: fixed;
-  top: 75%;
-  left: 0;
-  width: 100%;
-  background-color: #fff;
-  z-index: 1000;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 10px 20px;
+  margin: 20px;
   box-sizing: border-box;
 }
 

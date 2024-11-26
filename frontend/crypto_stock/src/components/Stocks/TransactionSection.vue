@@ -126,14 +126,12 @@ export default defineComponent({
 
 <style scoped>
 .transaction-section {
-  position: fixed;
-  top: 75%;
-  right: 0;
-  width: 30%;
+  flex: 1 1 25%;
+  position: static; /* Avoids fixed positioning for better responsiveness */
   background-color: #000000;
-  z-index: 1000;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 10px 20px;
+  padding: 20px;
+  margin: 20px;
   box-sizing: border-box;
 }
 
