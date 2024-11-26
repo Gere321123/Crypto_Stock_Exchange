@@ -85,14 +85,16 @@
       </form>
     </div>
 
-    <div>
-      <h3>Existing Stocks</h3>
-      <ul>
-        <li v-for="stock in stocks" :key="stock.id">
-          {{ stock.companyname }} - {{ stock.description }} - ${{ stock.price }}
-        </li>
-      </ul>
-    </div>
+  <div>
+    <h3>Existing Stocks</h3>
+    <ul>
+      <li v-for="stock in stocks" :key="stock[0]">
+        {{ stock[2] }} - {{ stock[3] }} - ${{ stock[16] }}
+        <button @click="editStock(stock.id)">Edit</button>
+        <button @click="deleteStock(stock.id)">Delete</button>
+      </li>
+    </ul>
+  </div>
   </div>
 </template>
 
@@ -121,16 +123,48 @@ export default {
       message: '',         // Message for registration status
     };
   },
-  async created() {
-    // Fetch all stocks on page load
-    try {
-      const response = await axios.get('http://127.0.0.1:5000/stocks');
-      this.stocks = response.data.stocks;
-    } catch (error) {
-      console.error("Error fetching stocks:", error);
-    }
+ mounted() {
+  this.fetchStocks();
   },
   methods: {
+    async fetchStocks() {
+      try {
+        const response = await fetch('http://localhost:5000/stocks');
+        const data = await response.json();
+        this.stocks = data.stocks; 
+      } catch (error) {
+        console.error('Error fetching stocks:', error);
+      }
+    },
+        // Method to handle editing a stock
+        editStock(stockId) {
+      // Redirect to the edit page or open an edit form
+      // You can pass the stockId to load the specific stock details for editing
+      alert(`Editing stock with ID: ${stockId}`);
+      // Example: this.$router.push(`/edit-stock/${stockId}`);
+    },
+    // Method to handle deleting a stock
+    deleteStock(stockId) {
+      if (confirm("Are you sure you want to delete this stock?")) {
+        // Send a DELETE request to the server to remove the stock
+        fetch(`http://localhost:5000/stocks/${stockId}`, {
+          method: "DELETE",
+        })
+          .then((response) => {
+            if (response.ok) {
+              // Remove the stock from the local list
+              this.stocks = this.stocks.filter((stock) => stock.id !== stockId);
+              alert("Stock deleted successfully.");
+            } else {
+              alert("Failed to delete stock.");
+            }
+          })
+          .catch((error) => {
+            console.error("Error deleting stock:", error);
+            alert("An error occurred while deleting the stock.");
+          });
+      }
+    },
       async registerUser() {
   try {
       const response = await axios.post('http://127.0.0.1:5000/register', {
@@ -201,6 +235,23 @@ export default {
       this.username = '';
       this.password = '';
     }
-  }
+  },
 };
 </script>
+
+
+<style scoped>
+button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+</style>

@@ -4,8 +4,8 @@
     <div>
       <h3>Existing Stocks</h3>
       <ul class="company-list">
-        <li v-for="stock in stocks" :key="stock.id">
-          {{ stock[2] }} - {{ stock[3] }} - ${{ stock[17] }}
+        <li v-for="stock in stocks" :key="stock[0]">
+          {{ stock[2] }} - {{ stock[3] }} - ${{ stock[16] }}
           <button @click="goToCompanyDetail(stock[0])" class="learn-more-button">Learn More</button>
         </li>
       </ul>
