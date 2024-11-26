@@ -1,18 +1,15 @@
 <template>
   <div class="company-detail">
-    <MainSiteForCompanies :company="company" />
     <PriceChangingComponent :company="company" />
   </div>
 </template>
 
 <script>
-import MainSiteForCompanies from './MainSiteForCompanies.vue';
 import PriceChangingComponent from './PriceChangingComponent.vue';
 
 export default {
   name: 'CompanyDetail',
   components: {
-    MainSiteForCompanies,
     PriceChangingComponent
   },
   data() {

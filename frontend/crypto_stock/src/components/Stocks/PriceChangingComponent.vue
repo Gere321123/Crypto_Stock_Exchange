@@ -34,8 +34,8 @@
 import { defineComponent, onMounted, ref, watch } from 'vue';
 import Connect from './Connect.vue';
 import { useReadContract } from '@wagmi/vue'
-import { abi } from '../abi'
-import { config } from '../../config'
+import { abi } from '../../abi'
+import { config } from '../../../config'
 
 export default defineComponent({
   name: 'PriceChangingComponent',
