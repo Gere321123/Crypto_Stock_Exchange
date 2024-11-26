@@ -1,5 +1,8 @@
 <template>
   <div class="transaction-section">
+    <img v-if="company[6]" :src="company[6]" alt="Company Wallpaper" />
+    <br>
+    <h2>{{ company[2] }}</h2>
     <button @click="toggleBuy">Buy Tokens</button>
     <button @click="toggleSell">Sell Tokens</button>
     <button @click="getvalue">Value</button>
@@ -41,6 +44,7 @@ export default defineComponent({
     },
   },
   setup(props) {
+    console.log(props.company);
     const connectComponent = ref();
     const { data, isError, isLoading, error } = useReadContract({
     abi,
@@ -134,7 +138,13 @@ export default defineComponent({
   margin: 20px;
   box-sizing: border-box;
 }
-
+.transaction-section img {
+  max-width: 100%; /* Prevents the image from growing wider than the container */
+  max-height: 100%; /* Prevents the image from growing taller than the container */
+  object-fit: contain; /* Ensures the image scales proportionally */
+  display: block; /* Removes inline element spacing issues */
+  margin: 0 auto; /* Centers the image horizontally */
+}
 button {
   margin: 5px;
   padding: 10px 15px;
