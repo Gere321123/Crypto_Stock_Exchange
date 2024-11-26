@@ -2,15 +2,18 @@
   <div class="company-detail">
     <PriceChangingComponent :company="company" />
   </div>
+    <TransactionSection :company="company"/>
+
 </template>
 
 <script>
 import PriceChangingComponent from './PriceChangingComponent.vue';
-
+import TransactionSection from "./TransactionSection.vue";
 export default {
   name: 'CompanyDetail',
   components: {
-    PriceChangingComponent
+    PriceChangingComponent,
+    TransactionSection,
   },
   data() {
     return {

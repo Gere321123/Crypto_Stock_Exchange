@@ -12,6 +12,7 @@ const { disconnect } = useDisconnect();
 const showModal = ref(false);
 
 const openModal = () => {
+  console.log("Opening wallet popup...");
   showModal.value = true;
 };
 
