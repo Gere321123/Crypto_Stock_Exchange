@@ -37,4 +37,4 @@ The project is in its early stages, with the platform deployed on the **Binance 
 
 ## Test the Contract on Binance Smart Chain (BSC) Testnet
 
-- **Contract Address:** `0x988E411D1eE2476847241c3983312356daf749f0`
+- **Contract Address:** `0xEC437Ca5c4D0965c3a7fd6Fd83b0CE7C52012D93`
