@@ -108,6 +108,18 @@ export default {
     cancelEdit() {
       this.$router.push("/"); // Redirect to the main page or stock list
     },
+    addAnnualDemand() {
+      this.annualdemand.push('');  // Add an empty string for a new picture URL
+    },
+    addOtherPicture() {
+      this.otherPictures.push('');  // Add an empty string for a new picture URL
+    },
+    removeAnnualDemand(index) {
+      this.annualdemand.splice(index, 1);  // Remove picture URL at the specified index
+    },
+    removeOtherPicture(index) {
+      this.otherPictures.splice(index, 1);  // Remove picture URL at the specified index
+    },
     stringToArray(input) {
     // Check if the input is a valid array string
     if (input === "[]") {
