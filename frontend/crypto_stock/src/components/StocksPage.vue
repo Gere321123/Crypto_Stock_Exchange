@@ -100,8 +100,8 @@
     <ul>
       <li v-for="stock in stocks" :key="stock[0]">
         {{ stock[2] }} - {{ stock[3] }} - ${{ stock[16] }}
-        <button @click="editStock(stock.id)">Edit</button>
-        <button @click="deleteStock(stock.id)">Delete</button>
+        <button @click="editStock(stock[0])">Edit</button>
+        <button @click="deleteStock(stock[0])">Delete</button>
       </li>
     </ul>
   </div>
@@ -155,15 +155,9 @@ export default {
       } catch (error) {
         console.error('Error fetching stocks:', error);
       }
+    },editStock(stockId) {
+      this.$router.push({ name: "EditStock", params: { stockId } });
     },
-        // Method to handle editing a stock
-        editStock(stockId) {
-      // Redirect to the edit page or open an edit form
-      // You can pass the stockId to load the specific stock details for editing
-      alert(`Editing stock with ID: ${stockId}`);
-      // Example: this.$router.push(`/edit-stock/${stockId}`);
-    },
-    // Method to handle deleting a stock
     deleteStock(stockId) {
       if (confirm("Are you sure you want to delete this stock?")) {
         // Send a DELETE request to the server to remove the stock
