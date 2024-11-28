@@ -71,7 +71,7 @@ export default defineComponent({
     const connectComponent = ref();
     const { data, isError, isLoading, error } = useReadContract({
     abi,
-    address: '0x988E411D1eE2476847241c3983312356daf749f0',
+    address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
     functionName: 'getValueOfOneTokenInWei',
     config: config
   });
