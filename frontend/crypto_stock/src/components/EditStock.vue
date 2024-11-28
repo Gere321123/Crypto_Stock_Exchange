@@ -8,7 +8,7 @@
         </div>
         <div>
           <label for="url">Network:</label>
-          <input type="text" v-model="network" required />
+          <input type="text" v-model="stock[34]" required />
         </div>
         <div>
           <label for="companyname">Company Name:</label>
@@ -34,8 +34,8 @@
         <!-- Array for other_pictures -->
         <div>
           <label for="other_pictures">Other Pictures:</label>
-          <div v-for="(index) in stock[7]" :key="index">
-            <input type="text" v-model="stock[7][index]" placeholder="Enter picture URL" />
+          <div v-for="(index) in otherPictures" :key="index">
+            <input type="text" v-model="otherPictures[index]" placeholder="Enter picture URL" />
             <button type="button" @click="removeOtherPicture(index)">Remove</button>
           </div>
           <button type="button" @click="addOtherPicture">Add Picture URL</button>
@@ -44,8 +44,8 @@
         <!-- Array for annual_demand -->
         <div>
           <label for="annual_demand">Annual Demand:</label>
-          <div v-for="(demand, index) in annual_demand" :key="index">
-            <input type="number" v-model="annual_demand[index]" placeholder="Enter demand value" />
+          <div v-for="(demand, index) in annualdemand" :key="index">
+            <input type="number" v-model="annualdemand[index]" placeholder="Enter demand value" />
             <button type="button" @click="removeAnnualDemand(index)">Remove</button>
           </div>
           <button type="button" @click="addAnnualDemand">Add Demand Value</button>
@@ -74,19 +74,9 @@ import axios from "axios";
 export default {
   data() {
     return {
-      stock: {
-        id: null,
-        url: "",
-        network: "",
-        companyname: "",
-        description: "",
-        long_description: "",
-        picture_url: "",
-        wallpaper_url: "",
-        website: "",
-        number_of_stock: null,
-        virtual_Bit: 0,
-      },
+      stock: {},
+      otherPictures: [],
+      annualdemand: [],
     };
   },
   mounted() {
@@ -94,22 +84,20 @@ export default {
   },
   methods: {
     async loadStock() {
-      console.log("call this");
-      const stockId = this.$route.params.stockId; // Get the stock ID from the route parameter
-      console.log("id: ", stockId);
+      const stockId = this.$route.params.stockId; 
       try {
         const response = await axios.get(`http://127.0.0.1:5000/stocks/${stockId}`);
-        console.log("response: ", response);
-        this.stock = response.data.stock; // Populate the stock object with data from the server
-        console.log("this.stock: ", this.stock);
+        this.stock = response.data.stock;
       } catch (error) {
         console.error("Error loading stock:", error);
         alert("Failed to load stock data.");
       }
+      this.otherPictures = stringToArray(this.stock[7]);
+      this.annualdemand = stringToArray(this.stock[8]);
     },
     async saveChanges() {
       try {
-        const response = await axios.put(`http://127.0.0.1:5000/stocks/${this.stock.id}`, this.stock);
+        const response = await axios.put(`http://127.0.0.1:5000/stocks/${this.stock[0]}`, this.stock);
         alert(response.data.message || "Stock updated successfully!");
         this.$router.push("/"); // Redirect to the main page or stock list
       } catch (error) {
@@ -119,6 +107,26 @@ export default {
     },
     cancelEdit() {
       this.$router.push("/"); // Redirect to the main page or stock list
+    },
+    stringToArray(input) {
+    // Check if the input is a valid array string
+    if (input === "[]") {
+      return [];
+    }
+
+    try {
+      // Remove the square brackets and split the content
+      const content = input.slice(1, -1); // Remove "[" and "]"
+      if (!content.trim()) {
+        return []; // If the content is empty, return an empty array
+      }
+
+      // Split by comma and trim each element
+      return content.split(',').map(item => item.trim());
+    } catch (error) {
+      console.error("Invalid array string:", input);
+      return [];
+    }
     },
   },
 };
