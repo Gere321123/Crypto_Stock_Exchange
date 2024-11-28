@@ -63,4 +63,4 @@ def get_stock_details(id):
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM stock WHERE id = ?", (id,))
         stock = cursor.fetchone()
-        return jsonify({"company": stock}), 200
+        return jsonify({"stock": stock}), 200

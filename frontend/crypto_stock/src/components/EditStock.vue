@@ -2,49 +2,69 @@
   <div>
     <h2>Edit Stock</h2>
     <form @submit.prevent="saveChanges">
-      <div>
-        <label for="url">URL:</label>
-        <input type="text" v-model="stock.url" required />
-      </div>
-      <div>
-        <label for="network">Network:</label>
-        <input type="text" v-model="stock.network" required />
-      </div>
-      <div>
-        <label for="companyname">Company Name:</label>
-        <input type="text" v-model="stock.companyname" required />
-      </div>
-      <div>
-        <label for="description">Description:</label>
-        <input type="text" v-model="stock.description" />
-      </div>
-      <div>
-        <label for="long_description">Long Description:</label>
-        <input type="text" v-model="stock.long_description" />
-      </div>
-      <div>
-        <label for="picture_url">Picture URL:</label>
-        <input type="text" v-model="stock.picture_url" />
-      </div>
-      <div>
-        <label for="wallpaper_url">Wallpaper URL:</label>
-        <input type="text" v-model="stock.wallpaper_url" />
-      </div>
-      <div>
-        <label for="website">Website:</label>
-        <input type="text" v-model="stock.website" />
-      </div>
-      <div>
-        <label for="number_of_stock">Number of Stock:</label>
-        <input type="number" v-model="stock.number_of_stock" required />
-      </div>
-      <div>
-        <label for="virtual_Bit">Virtual-Bit:</label>
-        <input type="number" v-model="stock.virtual_Bit" required />
-      </div>
-      <button type="submit">Save Changes</button>
-      <button type="button" @click="cancelEdit">Cancel</button>
-    </form>
+        <div>
+          <label for="url">URL:</label>
+          <input type="text" v-model="stock[1]" required />
+        </div>
+        <div>
+          <label for="url">Network:</label>
+          <input type="text" v-model="network" required />
+        </div>
+        <div>
+          <label for="companyname">Company Name:</label>
+          <input type="text" v-model="stock[2]" required />
+        </div>
+        <div>
+          <label for="description">Description:</label>
+          <input type="text" v-model="stock[3]" />
+        </div>
+        <div>
+          <label for="long_description">Long Description:</label>
+          <input type="text" v-model="stock[4]" />
+        </div>
+        <div>
+          <label for="picture_url">Picture URL:</label>
+          <input type="text" v-model="stock[5]" />
+        </div>
+        <div>
+          <label for="wallpaper_url">Wallpaper URL:</label>
+          <input type="text" v-model="stock[6]" />
+        </div>
+
+        <!-- Array for other_pictures -->
+        <div>
+          <label for="other_pictures">Other Pictures:</label>
+          <div v-for="(index) in stock[7]" :key="index">
+            <input type="text" v-model="stock[7][index]" placeholder="Enter picture URL" />
+            <button type="button" @click="removeOtherPicture(index)">Remove</button>
+          </div>
+          <button type="button" @click="addOtherPicture">Add Picture URL</button>
+        </div>
+
+        <!-- Array for annual_demand -->
+        <div>
+          <label for="annual_demand">Annual Demand:</label>
+          <div v-for="(demand, index) in annual_demand" :key="index">
+            <input type="number" v-model="annual_demand[index]" placeholder="Enter demand value" />
+            <button type="button" @click="removeAnnualDemand(index)">Remove</button>
+          </div>
+          <button type="button" @click="addAnnualDemand">Add Demand Value</button>
+        </div>
+
+        <div>
+          <label for="website">Website:</label>
+          <input type="text" v-model="stock[9]" />
+        </div>
+        <div>
+          <label for="number_of_stock">Number of Stock:</label>
+          <input type="number" v-model="stock[10]" required />
+        </div>
+        <div>
+          <label for="virtual_Bit">Virtual-Bit:</label>
+          <input type="number" v-model="stock[11]" required />
+        </div>
+        <button type="submit">Save Stock</button>
+      </form>
   </div>
 </template>
 
@@ -74,10 +94,14 @@ export default {
   },
   methods: {
     async loadStock() {
+      console.log("call this");
       const stockId = this.$route.params.stockId; // Get the stock ID from the route parameter
+      console.log("id: ", stockId);
       try {
         const response = await axios.get(`http://127.0.0.1:5000/stocks/${stockId}`);
+        console.log("response: ", response);
         this.stock = response.data.stock; // Populate the stock object with data from the server
+        console.log("this.stock: ", this.stock);
       } catch (error) {
         console.error("Error loading stock:", error);
         alert("Failed to load stock data.");
