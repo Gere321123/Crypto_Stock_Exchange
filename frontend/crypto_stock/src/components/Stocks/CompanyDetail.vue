@@ -30,7 +30,7 @@ export default {
       try {
         const response = await fetch(`http://localhost:5000/stocks/${id}`); // Use the desired ID directly
         const data = await response.json();
-        this.company = data.company; // Set the selected company details
+        this.company = data.stock; // Set the selected company details
       } catch (error) {
         console.error('Error fetching company details:', error);
       }
