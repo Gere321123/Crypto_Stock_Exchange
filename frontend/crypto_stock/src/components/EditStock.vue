@@ -34,7 +34,7 @@
         <!-- Array for other_pictures -->
         <div>
           <label for="other_pictures">Other Pictures:</label>
-          <div v-for="(index) in otherPictures" :key="index">
+          <div v-for="(picture ,index) in otherPictures" :key="index">
             <input type="text" v-model="otherPictures[index]" placeholder="Enter picture URL" />
             <button type="button" @click="removeOtherPicture(index)">Remove</button>
           </div>
@@ -96,10 +96,12 @@ export default {
         console.error("Error loading stock:", error);
         alert("Failed to load stock data.");
       }
-      this.otherPictures = stringToArray(this.stock[7]);
-      this.annualdemand = stringToArray(this.stock[8]);
+      this.otherPictures = this.stringToArray(this.stock[7]);
+      this.annualdemand = this.stringToArray(this.stock[8]);
     },
     async saveChanges() {
+      this.stock[7] = "["+this.otherPictures.toString()+"]";
+      this.stock[8] = "["+this.annualdemand.toString()+"]";
       try {
         const response = await axios.put(
           `http://127.0.0.1:5000/stocks/${this.$route.params.stockId}`,

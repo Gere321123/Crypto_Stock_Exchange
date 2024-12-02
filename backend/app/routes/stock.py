@@ -68,6 +68,7 @@ def get_stock_details(id):
 @stock_bp.route('/stocks/<int:id>', methods=['PUT'])
 def update_stock(id):
     data = request.json
+    print(data[8])
     try:
         with sqlite3.connect("cryptostock.db") as conn:
             cursor = conn.cursor()
@@ -86,8 +87,8 @@ def update_stock(id):
                        WHERE id = ?'''
             cursor.execute(query, (
                 data[1], data[2], data[3], data[4], 
-                data[5], data[6], json.dumps(data[7]), 
-                json.dumps(data[8]), data[9], data[10], 
+                data[5], data[6], data[7], 
+                data[8], data[9], data[10], 
                 data[11], data[12], data[34], id))
             conn.commit()
 
