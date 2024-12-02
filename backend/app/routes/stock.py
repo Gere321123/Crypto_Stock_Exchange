@@ -96,5 +96,26 @@ def update_stock(id):
     except Exception as e:
         print(e)
         return jsonify({"message": "An error occurred while updating the stock.", "error": str(e)}), 500
+    
+@stock_bp.route('/stocks/<int:id>', methods=['DELETE'])
+def delete_stock(id):
+    try:
+        with sqlite3.connect("cryptostock.db") as conn:
+            cursor = conn.cursor()
+
+            # Check if the stock exists
+            cursor.execute("SELECT * FROM stock WHERE id = ?", (id,))
+            stock = cursor.fetchone()
+            if not stock:
+                return jsonify({"message": "Stock not found"}), 404
+
+            # Delete the stock
+            cursor.execute("DELETE FROM stock WHERE id = ?", (id,))
+            conn.commit()
+
+            return jsonify({"message": "Stock deleted successfully."}), 200
+    except Exception as e:
+        print("Error:", str(e))
+        return jsonify({"message": "An error occurred while deleting the stock.", "error": str(e)}), 500
 
 

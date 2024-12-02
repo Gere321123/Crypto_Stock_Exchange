@@ -16,12 +16,18 @@ def register():
 
     with sqlite3.connect("cryptostock.db") as conn:
         cursor = conn.cursor()
+
+        # Check if the username already exists
+        cursor.execute("SELECT username FROM user WHERE username = ?", (username,))
+        existing_user = cursor.fetchone()
+        if existing_user:
+            return jsonify({"message": "Username already exists."}), 400
+
         try:
+            # Insert new user
             cursor.execute("INSERT INTO user (username, password, who) VALUES (?, ?, ?)", 
                            (username, generate_password_hash(password), who))
             conn.commit()
-        except sqlite3.IntegrityError:
-            return jsonify({"message": "Username already exists."}), 400
         except Exception as e:
             return jsonify({"message": "An error occurred during registration.", "error": str(e)}), 500
 
@@ -59,3 +65,23 @@ def get_users():
         except Exception as e:
             return jsonify({"message": "An error occurred while retrieving users.", "error": str(e)}), 500
 
+@auth_bp.route('/users/<string:username>', methods=['DELETE'])
+def delete_user(username):
+    try:
+        with sqlite3.connect("cryptostock.db") as conn:
+            cursor = conn.cursor()
+
+            # Check if the user exists
+            cursor.execute("SELECT * FROM user WHERE username = ?", (username,))
+            user = cursor.fetchone()
+            if not user:
+                return jsonify({"message": "User not found"}), 404
+
+            # Delete the user
+            cursor.execute("DELETE FROM user WHERE username = ?", (username,))
+            conn.commit()
+
+            return jsonify({"message": f"User '{username}' deleted successfully."}), 200
+    except Exception as e:
+        print("Error:", str(e))
+        return jsonify({"message": "An error occurred while deleting the user.", "error": str(e)}), 500
