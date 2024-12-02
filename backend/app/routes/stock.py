@@ -64,3 +64,36 @@ def get_stock_details(id):
         cursor.execute("SELECT * FROM stock WHERE id = ?", (id,))
         stock = cursor.fetchone()
         return jsonify({"stock": stock}), 200
+
+@stock_bp.route('/stocks/<int:id>', methods=['PUT'])
+def update_stock(id):
+    data = request.json
+    try:
+        with sqlite3.connect("cryptostock.db") as conn:
+            cursor = conn.cursor()
+
+            # Check if stock exists
+            cursor.execute("SELECT * FROM stock WHERE id = ?", (id,))
+            stock = cursor.fetchone()
+            if not stock:
+                return jsonify({"message": "Stock not found"}), 404
+
+            # Update the stock
+            query = '''UPDATE stock SET 
+                       url = ?, companyname = ?, description = ?, long_description = ?, 
+                       picture_url = ?, wallpaper_url = ?, other_pictures = ?, annual_demand = ?, 
+                       website = ?, number_of_stock = ?, virtualBit = ?, username = ?, network = ?
+                       WHERE id = ?'''
+            cursor.execute(query, (
+                data[1], data[2], data[3], data[4], 
+                data[5], data[6], json.dumps(data[7]), 
+                json.dumps(data[8]), data[9], data[10], 
+                data[11], data[12], data[34], id))
+            conn.commit()
+
+            return jsonify({"message": "Stock updated successfully"}), 200
+    except Exception as e:
+        print(e)
+        return jsonify({"message": "An error occurred while updating the stock.", "error": str(e)}), 500
+
+

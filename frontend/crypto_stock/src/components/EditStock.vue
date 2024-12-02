@@ -63,6 +63,10 @@
           <label for="virtual_Bit">Virtual-Bit:</label>
           <input type="number" v-model="stock[11]" required />
         </div>
+        <div>
+          <label for="virtual_Bit">User name:</label>
+          <input type="text" v-model="stock[12]" required />
+        </div>
         <button type="submit">Save Stock</button>
       </form>
   </div>
@@ -97,11 +101,14 @@ export default {
     },
     async saveChanges() {
       try {
-        const response = await axios.put(`http://127.0.0.1:5000/stocks/${this.stock[0]}`, this.stock);
+        const response = await axios.put(
+          `http://127.0.0.1:5000/stocks/${this.$route.params.stockId}`,
+          this.stock
+        );
         alert(response.data.message || "Stock updated successfully!");
-        this.$router.push("/"); // Redirect to the main page or stock list
+        this.$router.push("/");
       } catch (error) {
-        console.error("Error saving stock changes:", error);
+        console.error("Error saving stock:", error);
         alert("Failed to save changes.");
       }
     },
