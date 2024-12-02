@@ -90,7 +90,7 @@
     <ul>
       <li v-for="user in users" :key="user[0]">
         {{ user[0] }} - {{ user[1] }}
-        <button>Delete</button>
+        <button @click="deleteUser(user[0])">Delete</button>
       </li>
     </ul>
   </div>
@@ -145,6 +145,25 @@ export default {
         this.stocks = data.stocks; 
       } catch (error) {
         console.error('Error fetching stocks:', error);
+      }
+    },
+    async deleteUser(username) {
+      if (confirm(`Are you sure you want to delete user "${username}"?`)) {
+        try {
+          const response = await fetch(`http://localhost:5000/users/${username}`, {
+            method: 'DELETE'
+          });
+          if (!response.ok) {
+            const data = await response.json();
+            throw new Error(data.message || 'Failed to delete user.');
+          }
+          // Remove the user from the local array if deletion succeeds
+          this.users = this.users.filter((user) => user[0] !== username);
+          alert(`User "${username}" deleted successfully.`);
+        } catch (error) {
+          console.error("Error deleting user:", error);
+          alert(`An error occurred: ${error.message}`);
+        }
       }
     },
     async fetchUsers() {
