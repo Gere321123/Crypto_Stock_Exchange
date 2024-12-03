@@ -83,22 +83,36 @@ export default {
       annualdemand: [],
     };
   },
+  props: {
+    stockId: {
+        type: String,
+        required: false, // Optional, as it might come from the route
+    },
+},
   mounted() {
     this.loadStock();
   },
   methods: {
     async loadStock() {
-      const stockId = this.$route.params.stockId; 
-      try {
+    const stockId = this.stockId || this.$route.params.stockId; // Use prop first, then fallback to route params
+    if (!stockId) {
+        console.error("No stockId provided");
+        alert("Stock ID is missing!");
+        return;
+    }
+    try {
         const response = await axios.get(`http://127.0.0.1:5000/stocks/${stockId}`);
         this.stock = response.data.stock;
-      } catch (error) {
+
+        // Parse fields after loading
+        this.otherPictures = this.stringToArray(this.stock[7]);
+        this.annualdemand = this.stringToArray(this.stock[8]);
+    } catch (error) {
         console.error("Error loading stock:", error);
         alert("Failed to load stock data.");
-      }
-      this.otherPictures = this.stringToArray(this.stock[7]);
-      this.annualdemand = this.stringToArray(this.stock[8]);
-    },
+    }
+},
+
     async saveChanges() {
       this.stock[7] = "["+this.otherPictures.toString()+"]";
       this.stock[8] = "["+this.annualdemand.toString()+"]";

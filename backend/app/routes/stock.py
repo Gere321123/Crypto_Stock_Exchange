@@ -118,4 +118,14 @@ def delete_stock(id):
         print("Error:", str(e))
         return jsonify({"message": "An error occurred while deleting the stock.", "error": str(e)}), 500
 
+@stock_bp.route('/stock-by-username/<string:username>', methods=['GET'])
+def get_stock_by_username(username):
+    with sqlite3.connect("cryptostock.db") as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT id FROM stock WHERE username = ?", (username,))
+        stock = cursor.fetchone()
+        if stock:
+            return jsonify({"stockId": stock[0]}), 200
+        print("itt")
+        return jsonify({"message": "No stock found for this username"}), 404
 

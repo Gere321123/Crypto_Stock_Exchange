@@ -16,7 +16,7 @@ const routes = [
   { path: '/company/:id', name: 'companyDetail', component: CompanyDetail, props: true },
   { path: '/stocks', name: 'StocksPage', component: StocksPage },
   { path: "/edit-stock/:stockId", name: "EditStock", component: EditStock },
-  { path: '/companyedit', name: 'CompanyEditPage', component: CompanyEditPage },
+  { path: "/company/edit/:username", name: "CompanyEditPage", component: CompanyEditPage },
 ];
 
 const router = createRouter({

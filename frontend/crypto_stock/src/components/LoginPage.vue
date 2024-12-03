@@ -41,7 +41,7 @@ export default {
         if (response.data.role === 'admin') {
           this.$router.push({ name: 'StocksPage' });
         } else if (response.data.role === 'company') {
-          this.$router.push({ name: 'CompanyEditPage' });
+            this.$router.push({ name: "CompanyEditPage", params: { username: this.username } });
         }
       } catch (error) {
         this.errorMessage = "Invalid credentials. Please try again.";
