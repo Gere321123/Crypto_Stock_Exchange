@@ -132,18 +132,6 @@ input.success {
 label.success {
   color: #28a745;
 }
-.form-container {
-  max-width: 600px;
-  margin: 0 auto;
-  overflow-y: auto; /* Allow scrolling if content overflows */
-  padding: 20px;
-}
-
-.form-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
 
 /* Responsive design: inputs and labels adapt for smaller screens */
 @media (max-width: 768px) {
