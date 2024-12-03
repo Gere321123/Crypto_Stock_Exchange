@@ -46,8 +46,12 @@ def login():
         if record and check_password_hash(record[0], password):
             session['user'] = username
             session['who'] = record[1]
-            return jsonify({"message": "Login successful"}), 200
+
+            # Return the appropriate role
+            role = record[1]
+            return jsonify({"message": "Login successful", "role": role}), 200
         return jsonify({"message": "Invalid credentials"}), 401
+
 
 @auth_bp.route('/logout', methods=['POST'])
 def logout():

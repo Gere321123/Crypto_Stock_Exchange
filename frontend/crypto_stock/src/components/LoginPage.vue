@@ -29,17 +29,23 @@ export default {
   },
   methods: {
     async handleLogin() {
-        try {
-            const response = await axios.post('http://127.0.0.1:5000/login', {
-                username: this.username,
-                password: this.password
-            });
-            alert(response.data.message);
-            // Redirect to stocks page if login is successful
-            this.$router.push({ name: 'StocksPage' });
-        } catch (error) {
-            this.errorMessage = "Invalid credentials. Please try again.";
+      try {
+        const response = await axios.post('http://127.0.0.1:5000/login', {
+          username: this.username,
+          password: this.password
+        });
+
+        alert(response.data.message);
+
+        // Redirect based on user type
+        if (response.data.role === 'admin') {
+          this.$router.push({ name: 'StocksPage' });
+        } else if (response.data.role === 'company') {
+          this.$router.push({ name: 'CompanyEditPage' });
         }
+      } catch (error) {
+        this.errorMessage = "Invalid credentials. Please try again.";
+      }
     }
 }
 };

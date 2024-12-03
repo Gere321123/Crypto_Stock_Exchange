@@ -6,6 +6,7 @@ import LoginPage from '../components/LoginPage.vue'
 import StocksPage from '../components/StocksPage.vue'
 import CompanyDetail from '../components/Stocks/CompanyDetail.vue'
 import EditStock from "../components/EditStock.vue"
+import CompanyEditPage from '../components/CompanyEditPage.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: HomeComponent },
@@ -15,6 +16,7 @@ const routes = [
   { path: '/company/:id', name: 'companyDetail', component: CompanyDetail, props: true },
   { path: '/stocks', name: 'StocksPage', component: StocksPage },
   { path: "/edit-stock/:stockId", name: "EditStock", component: EditStock },
+  { path: '/companyedit', name: 'CompanyEditPage', component: CompanyEditPage },
 ];
 
 const router = createRouter({
