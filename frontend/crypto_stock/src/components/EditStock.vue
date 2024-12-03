@@ -2,6 +2,7 @@
   <div>
     <h2>Edit Stock</h2>
     <form @submit.prevent="saveChanges">
+      <div v-if="!loginasCompany">      
         <div>
           <label for="url">URL:</label>
           <input type="text" v-model="stock[1]" required />
@@ -10,6 +11,7 @@
           <label for="url">Network:</label>
           <input type="text" v-model="stock[34]" required />
         </div>
+      </div>
         <div>
           <label for="companyname">Company Name:</label>
           <input type="text" v-model="stock[2]" required />
@@ -55,17 +57,19 @@
           <label for="website">Website:</label>
           <input type="text" v-model="stock[9]" />
         </div>
-        <div>
-          <label for="number_of_stock">Number of Stock:</label>
-          <input type="number" v-model="stock[10]" required />
-        </div>
-        <div>
-          <label for="virtual_Bit">Virtual-Bit:</label>
-          <input type="number" v-model="stock[11]" required />
-        </div>
-        <div>
-          <label for="virtual_Bit">User name:</label>
-          <input type="text" v-model="stock[12]" required />
+        <div v-if="!loginasCompany">
+          <div>
+            <label for="number_of_stock">Number of Stock:</label>
+            <input type="number" v-model="stock[10]" required />
+          </div>
+          <div>
+            <label for="virtual_Bit">Virtual-Bit:</label>
+            <input type="number" v-model="stock[11]" required />
+          </div>
+          <div>
+            <label for="virtual_Bit">User name:</label>
+            <input type="text" v-model="stock[12]" required />
+          </div>
         </div>
         <button type="submit">Save Stock</button>
       </form>
@@ -82,6 +86,7 @@ export default {
       otherPictures: [],
       annualdemand: [],
       id: '',
+      loginasCompany: true,
     };
   },
   props: {
@@ -95,6 +100,9 @@ export default {
   },
   methods: {
     async loadStock() {
+      if (!this.stockId){
+        this.loginasCompany = false; 
+      }
     this.id = this.stockId || this.$route.params.stockId; // Use prop first, then fallback to route params
     if (!this.id) {
         console.error("No stockId provided");
