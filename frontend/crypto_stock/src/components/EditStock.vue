@@ -81,6 +81,7 @@ export default {
       stock: {},
       otherPictures: [],
       annualdemand: [],
+      id: '',
     };
   },
   props: {
@@ -94,16 +95,15 @@ export default {
   },
   methods: {
     async loadStock() {
-    const stockId = this.stockId || this.$route.params.stockId; // Use prop first, then fallback to route params
-    if (!stockId) {
+    this.id = this.stockId || this.$route.params.stockId; // Use prop first, then fallback to route params
+    if (!this.id) {
         console.error("No stockId provided");
         alert("Stock ID is missing!");
         return;
     }
     try {
-        const response = await axios.get(`http://127.0.0.1:5000/stocks/${stockId}`);
+        const response = await axios.get(`http://127.0.0.1:5000/stocks/${this.id}`);
         this.stock = response.data.stock;
-
         // Parse fields after loading
         this.otherPictures = this.stringToArray(this.stock[7]);
         this.annualdemand = this.stringToArray(this.stock[8]);
@@ -116,13 +116,14 @@ export default {
     async saveChanges() {
       this.stock[7] = "["+this.otherPictures.toString()+"]";
       this.stock[8] = "["+this.annualdemand.toString()+"]";
+
+      console.log(this.stock);
       try {
         const response = await axios.put(
-          `http://127.0.0.1:5000/stocks/${this.$route.params.stockId}`,
+          `http://127.0.0.1:5000/stocks/${this.id}`,
           this.stock
         );
         alert(response.data.message || "Stock updated successfully!");
-        this.$router.push("/");
       } catch (error) {
         console.error("Error saving stock:", error);
         alert("Failed to save changes.");
