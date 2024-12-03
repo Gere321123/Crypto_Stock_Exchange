@@ -81,6 +81,10 @@
           <label for="virtual_Bit">Virtual-Bit:</label>
           <input type="number" v-model="virtual_Bit" required />
         </div>
+        <div>
+          <label for="virtual_Bit">Username:</label>
+          <input type="text" v-model="stockUsername" required />
+        </div>
         <button type="submit">Create Stock</button>
       </form>
     </div>
@@ -125,6 +129,7 @@ export default {
       number_of_stock: null,
       virtual_Bit: 0,
       username: '',
+      stockUsername: '',
       password: '',   // Added to capture password
       other_pictures: [],  // Array for other pictures URLs
       annual_demand: [],   // Array for annual demand values
@@ -225,7 +230,7 @@ export default {
         website: this.website,
         number_of_stock: this.number_of_stock,
         virtual_Bit: this.virtual_Bit,
-        username: this.username
+        username: this.stockUsername
       };
 
       try {
@@ -264,6 +269,7 @@ export default {
       this.website = '';
       this.number_of_stock = null;
       this.virtual_Bit = 0;
+      this.stockUsername = '';
       this.username = '';
       this.password = '';
     }
