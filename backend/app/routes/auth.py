@@ -89,3 +89,28 @@ def delete_user(username):
     except Exception as e:
         print("Error:", str(e))
         return jsonify({"message": "An error occurred while deleting the user.", "error": str(e)}), 500
+    
+@auth_bp.route('/change-password', methods=['POST'])
+def change_password():
+    data = request.json
+    username = data.get("username")
+    new_password = data.get("newPassword")
+
+    if not username or not new_password:
+        return jsonify({"message": "Username and new password are required."}), 400
+
+    hashed_password = generate_password_hash(new_password)
+
+    try:
+        with sqlite3.connect("cryptostock.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "UPDATE user SET password = ? WHERE username = ?",
+                (hashed_password, username)
+            )
+            conn.commit()
+    except Exception as e:
+        return jsonify({"message": "An error occurred while changing the password.", "error": str(e)}), 500
+
+    return jsonify({"message": "Password changed successfully."}), 200
+
