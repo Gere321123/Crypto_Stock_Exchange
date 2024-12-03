@@ -26,7 +26,6 @@ export default {
           `http://127.0.0.1:5000/stock-by-username/${username}`
         );
         this.stockId = response.data.stockId; // Assign the stock ID
-        console.log( this.stockId);
       } catch (error) {
         console.error("Error fetching stock ID:", error);
       }
