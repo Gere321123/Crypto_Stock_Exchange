@@ -8,10 +8,6 @@ import threading
 # Initialize Flask app
 app = Flask(__name__)
 
-# Function to fetch Bitcoin price in USD
-def get_bitcoin_price():
-    # Placeholder function - Replace with API call to fetch Bitcoin price
-    return 40000.0  # Example: $40,000 per Bitcoin
 
 CONTRACT_ABI = [
     {
