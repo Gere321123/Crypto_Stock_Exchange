@@ -37,4 +37,12 @@ The project is in its early stages, with the platform deployed on the **Binance 
 
 ## Test the Contract on Binance Smart Chain (BSC) Testnet
 
-- **Contract Address:** `0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512`
+- **For me Deploy contract:** `export $(grep -v '^#' .env | xargs)`
+
+`forge script script/DeployMockWBTC.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast -vvvv`
+
+change the address
+
+`forge build`
+
+`forge script script/DeployCoin.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast -vvvv`

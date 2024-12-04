@@ -11,7 +11,7 @@ contract CoinTest is Test {
     Coin private coin;
     DeployCoin private deployCoin;
 
-    address private wBTCAddress = 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599;
+    address private wBTCAddress = 0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512;
     address public USER = makeAddr("user");
 
     uint256 public constant STARTING_WBTC_BALANCE = 100 * 10 ** 18; // 100 wBTC (assuming 18 decimals)
