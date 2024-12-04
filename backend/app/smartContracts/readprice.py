@@ -88,7 +88,7 @@ def update_stock_prices():
 #schedule.every(1).minute.do(update_stock_prices)
 
 def start_schedule():
-    schedule.every(10).seconds.do(update_stock_prices)
+    schedule.every(1).minutes.do(update_stock_prices)
 
     def run_scheduler():
         while True:
