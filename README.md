@@ -29,19 +29,15 @@ To create a dynamic and fair market, we utilize a **price adjustment formula ins
 - Stock prices adjust automatically based on supply and demand.
 - This ensures liquidity and enables real-time price discovery, fostering a transparent and efficient marketplace.
 
-## Development Status
-
-The project is in its early stages, with the platform deployed on the **Binance Smart Chain (BSC) testnet** using **Wrapped Bitcoin (WBTC)**. We continue to improve the platform and welcome feedback from the community to make **Crypto Stock Exchange** the preferred platform for decentralized fundraising.
-
 ---
 
-## Test the Contract on Binance Smart Chain (BSC) Testnet
+## For me 
 
-- **For me Deploy contract:** `export $(grep -v '^#' .env | xargs)`
+ `export $(grep -v '^#' .env | xargs)`
 
 `forge script script/DeployMockWBTC.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast -vvvv`
 
-change the address
+change the addressin the Coin.sol
 
 `forge build`
 
