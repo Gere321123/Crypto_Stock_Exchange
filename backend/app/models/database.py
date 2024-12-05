@@ -52,7 +52,23 @@ def init_db():
             profit_1y INTEGER,
             profit_5y INTEGER,
             profit_all INTEGER,
-            network TEXT,
-            FOREIGN KEY(username) REFERENCES user(username))''')
+            network TEXT,          
+            country TEXT,  
+            min_price_24 REAL,  -- Minimum price in the last 24 hours
+            max_price_24 REAL,  -- Maximum price in the last 24 hours
+            min_price_5d REAL,   -- Minimum price in the last 5 days
+            max_price_5d REAL,   -- Maximum price in the last 5 days
+            min_price_1m REAL,   -- Minimum price in the last 1 month
+            max_price_1m REAL,   -- Maximum price in the last 1 month
+            min_price_3m REAL,   -- Minimum price in the last 3 months
+            max_price_3m REAL,   -- Maximum price in the last 3 months
+            min_price_1y REAL,   -- Minimum price in the last 1 year
+            max_price_1y REAL,   -- Maximum price in the last 1 year
+            min_price_5y REAL,   -- Minimum price in the last 5 years
+            max_price_5y REAL,   -- Maximum price in the last 5 years
+            min_price_all REAL,  -- Minimum price for all-time
+            max_price_all REAL,  -- Maximum price for all-time
+            FOREIGN KEY(username) REFERENCES user(username)
+        )''')
 
         conn.commit()
