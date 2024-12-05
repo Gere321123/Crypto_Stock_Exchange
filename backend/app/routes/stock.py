@@ -38,7 +38,7 @@ def stocks():
             price = data['virtual_Bit'] / data['number_of_stock']
             total_supply = data['number_of_stock']
             available_coins = total_supply  # Available coins same as total supply initially
-            marketcap = price * total_supply
+            marketcap = 0
             priceinUSD = get_bitcoin_value(price)  # Assuming price is already in USD
             start_date = datetime.datetime.now().strftime("%Y-%m-%d")  # Today's date
             
