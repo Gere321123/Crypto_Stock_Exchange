@@ -9,10 +9,10 @@
   </a>
     <div class="price-container">
     <div class="price-box">
-      <p>Price in BIT: {{ company[16] }} BIT</p>
+      <p>In BIT: {{ stock[16] }} BIT</p>
     </div>
     <div class="price-box">
-      <p>Price in USD: {{ company[17] }} $</p>
+      <p>In USD: {{ parseFloat(stock[17]).toFixed(5) }} $</p>
     </div>
     </div>
     <div class="price-container">
@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, onMounted, onUnmounted, reactive  } from 'vue';
 import { useReadContract } from '@wagmi/vue'
 import { abi } from '../../abi'
 import { config } from '../../../config'
@@ -61,13 +61,13 @@ export default defineComponent({
   name: 'TransactionSection',
   components: { Connect },
   props: {
-    company: {
-      type: Object as () => Record<number, any>,
-      required: true,
-    },
+  company: {
+    type: Array as () => Array<any>, // Specify that `company` is an array
+    required: true,
   },
+},
   setup(props) {
-    console.log(props.company);
+    const stock = reactive([...props.company]);
     const connectComponent = ref();
     const { data, isError, isLoading, error } = useReadContract({
     abi,
@@ -131,6 +131,40 @@ export default defineComponent({
     const openWalletPopup = () => {
       connectComponent.value?.openModal();
     };
+    const refreshInterval = ref<ReturnType<typeof setInterval> | null>(null);
+
+    const fetchCompanyDetails = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/stocks/${props.company[0]}`);
+        const data = await response.json();
+        stock[16] = data.stock[16];
+        stock[17] = data.stock[17]; 
+      } catch (error) {
+        console.error('Error fetching company details:', error);
+      }
+    };
+
+    const startRefreshing = () => {
+  fetchCompanyDetails(); // Initial fetch
+  refreshInterval.value = setInterval(() => {
+    fetchCompanyDetails(); // Periodic fetch
+  }, 60000); // 1 second
+};
+
+    const stopRefreshing = () => {
+      if (refreshInterval.value) {
+        clearInterval(refreshInterval.value);
+        refreshInterval.value = null;
+      }
+    };
+
+    onMounted(() => {
+      startRefreshing(); // Start refreshing when the component mounts
+    });
+
+    onUnmounted(() => {
+      stopRefreshing(); // Clean up the interval when the component unmounts
+    });
 
     return {
       showBuy,
@@ -146,6 +180,7 @@ export default defineComponent({
       calculateEth,
       openWalletPopup,
       connectComponent,
+      stock,
     };
   },
 });
