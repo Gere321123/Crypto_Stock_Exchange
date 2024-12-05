@@ -33,6 +33,10 @@
           <input type="text" v-model="companyname" required />
         </div>
         <div>
+          <label for="companyname">Country:</label>
+          <input type="text" v-model="country" required />
+        </div>
+        <div>
           <label for="description">Description:</label>
           <input type="text" v-model="description" />
         </div>
@@ -125,6 +129,7 @@ export default {
       long_description: '',
       picture_url: '',
       wallpaper_url: '',
+      country :'',
       website: '',
       number_of_stock: null,
       virtual_Bit: 0,
@@ -230,7 +235,8 @@ export default {
         website: this.website,
         number_of_stock: this.number_of_stock,
         virtual_Bit: this.virtual_Bit,
-        username: this.stockUsername
+        username: this.stockUsername,
+        country: this.country,
       };
 
       try {
@@ -272,6 +278,7 @@ export default {
       this.stockUsername = '';
       this.username = '';
       this.password = '';
+      this.country = '';
     }
   },
 };
