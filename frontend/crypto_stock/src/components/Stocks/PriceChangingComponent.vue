@@ -21,104 +21,80 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref, watch } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 
 export default defineComponent({
   name: 'PriceChangingComponent',
-  props: {
-    company: {
-      type: Object as () => Record<number, any>,
-      default: () => ({})
-    }
-  },
-  setup(props) {
-    // Reactive refs for state
-    const showBuy = ref(false);
-    const showSell = ref(false);
-    const ethAmount = ref(0);
-    const tokensAmount = ref(0);
-    const tokensToReceive = ref(0);
-    const ethToReceive = ref(0);
+  setup() {
     const priceCanvas = ref<HTMLCanvasElement | null>(null);
-    const stockData = ref<any>(null); // Store fetched stock data
-    const timePeriod = ref('24h'); // Time period for stock data
+    const stockData = ref<number[]>([]); // Random stock data array
+    const timePeriod = ref('24h'); // Default time period
 
-    const fetchCompanyDetails = async (timeframe: string) => {
-      try {
-        const response = await fetch(`http://localhost:5000/stocks/${props.company[0]}?timeframe=${timeframe}`);
-        const data = await response.json();
-        stockData.value = data.stock; // Store the fetched stock data
-        drawPriceChanges();
-      } catch (error) {
-        console.error('Error fetching company details:', error);
+    // Generate random stock data
+    const generateRandomStockData = () => {
+      const data = Array.from({ length: 1440 }, () =>
+        Math.random() * 100 // Random numbers between 0 and 100
+      );
+      stockData.value = data;
+      drawPriceChanges();
+    };
+
+    // Draw the price changes on the canvas
+    const drawPriceChanges = () => {
+      if (priceCanvas.value && stockData.value.length > 0) {
+        const canvas = priceCanvas.value;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          // Set canvas dimensions dynamically
+          const canvasWidth = canvas.clientWidth;
+          const canvasHeight = canvas.clientHeight;
+          canvas.width = canvasWidth;
+          canvas.height = canvasHeight;
+
+          // Clear the canvas
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Set background
+          ctx.fillStyle = '#000';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          // Set line styles
+          ctx.strokeStyle = '#00ff00'; // Green line
+          ctx.lineWidth = 2;
+
+          // Draw stock data line
+          ctx.beginPath();
+          stockData.value.forEach((price, index) => {
+            // Calculate X and Y coordinates
+            const x = (index / (stockData.value.length - 1)) * canvas.width;
+            const y = canvas.height - (price / 100) * canvas.height; // Scale price to canvas height
+
+            if (index === 0) {
+              ctx.moveTo(x, y); // Start point
+            } else {
+              ctx.lineTo(x, y); // Line to next point
+            }
+          });
+          ctx.stroke(); // Render the line
+        }
       }
     };
 
-    const drawPriceChanges = () => {
-  if (priceCanvas.value && stockData.value[20].length > 0) {
-    const canvas = priceCanvas.value;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      // Clear the canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // Set the background
-      ctx.fillStyle = '#000';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Draw the diagram
-      ctx.strokeStyle = '#00ff00'; // Line color
-      ctx.lineWidth = 2;
-
-      // Start drawing the price line
-      ctx.beginPath();
-      stockData.value[20].forEach((price: number, index: number) => {
-        // X-coordinate based on index (time)
-        const x = (index / (stockData.value[20].length - 1)) * canvas.width;
-
-        // Y-coordinate scaled between min_price_24 and max_price_24
-        const y =
-          canvas.height -
-          ((price - stockData.value[36]) / (stockData.value[37] - stockData.value[36])) *
-            canvas.height;
-
-        if (index === 0) {
-          ctx.moveTo(x, y); // Start point
-        } else {
-          ctx.lineTo(x, y); // Line to next point
-        }
-      });
-      ctx.stroke(); // Draw the line
-    }
-  }
-};
-// Add a new value to price_history_24 and redraw
-
-    // Handle time period change (button click)
+    // Handle time period change (currently regenerates random data)
     const changeTimePeriod = (newTimePeriod: string) => {
       timePeriod.value = newTimePeriod;
-      fetchCompanyDetails(newTimePeriod); // Fetch data for the selected time period
+      generateRandomStockData();
     };
 
     onMounted(() => {
-      fetchCompanyDetails('24h'); // Default fetch for 24 hours
-    });
-
-    watch(() => props.company, () => {
-      fetchCompanyDetails(timePeriod.value); // Re-fetch data if company changes
+      generateRandomStockData(); // Generate initial data on mount
     });
 
     return {
-      showBuy,
-      showSell,
-      ethAmount,
-      tokensAmount,
-      tokensToReceive,
-      ethToReceive,
       priceCanvas,
       changeTimePeriod,
     };
-  }
+  },
 });
 </script>
 

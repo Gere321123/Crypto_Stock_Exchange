@@ -43,7 +43,15 @@ def stocks():
             start_date = datetime.datetime.now().strftime("%Y-%m-%d")  # Today's date
             
             # Initialize price history and profit fields
-            price_history_empty = "[]"
+            i = 1
+            price_history_empty_array = []
+            price_history_empty_array.append(priceinUSD)
+            while i < 1440:
+                price_history_empty_array.append(-1)
+                i += 1
+
+            price_history_empty = json.dumps(price_history_empty_array)
+            
             profit_zero = 0
             
             # Initialize min and max price fields
