@@ -14,7 +14,9 @@
     </div>
 
     <!-- Canvas for displaying the stock price chart -->
-    <canvas ref="priceCanvas" width="500" height="700"></canvas>
+    <div class="canvas-container">
+      <canvas ref="priceCanvas"></canvas>
+    </div>
   </div>
 </template>
 
@@ -53,29 +55,44 @@ export default defineComponent({
     };
 
     const drawPriceChanges = () => {
-      if (priceCanvas.value && stockData.value) {
-        const ctx = priceCanvas.value.getContext('2d');
-        if (ctx) {
-          ctx.clearRect(0, 0, priceCanvas.value.width, priceCanvas.value.height);
-          ctx.fillStyle = '#000';
-          ctx.fillRect(0, 0, priceCanvas.value.width, priceCanvas.value.height);
+  if (priceCanvas.value && stockData.value[20].length > 0) {
+    const canvas = priceCanvas.value;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      // Clear the canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-          ctx.fillStyle = '#fff';
-          ctx.font = '20px Arial';
-          ctx.fillText(`Price changes for ${props.company[2]}`, 50, 100);
+      // Set the background
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-          // Draw stock data (for simplicity, let's assume stockData.value contains time and price data)
-          if (stockData.value) {
-            const data = stockData.value[timePeriod.value]; // Assume data is structured by time period
-            data.forEach((point: any, index: number) => {
-              const x = (index / data.length) * priceCanvas.value.width;
-              const y = priceCanvas.value.height - (point.price / 100) * priceCanvas.value.height;
-              ctx.fillRect(x, y, 2, 2); // Draw each point as a small square
-            });
-          }
+      // Draw the diagram
+      ctx.strokeStyle = '#00ff00'; // Line color
+      ctx.lineWidth = 2;
+
+      // Start drawing the price line
+      ctx.beginPath();
+      stockData.value[20].forEach((price: number, index: number) => {
+        // X-coordinate based on index (time)
+        const x = (index / (stockData.value[20].length - 1)) * canvas.width;
+
+        // Y-coordinate scaled between min_price_24 and max_price_24
+        const y =
+          canvas.height -
+          ((price - stockData.value[36]) / (stockData.value[37] - stockData.value[36])) *
+            canvas.height;
+
+        if (index === 0) {
+          ctx.moveTo(x, y); // Start point
+        } else {
+          ctx.lineTo(x, y); // Line to next point
         }
-      }
-    };
+      });
+      ctx.stroke(); // Draw the line
+    }
+  }
+};
+// Add a new value to price_history_24 and redraw
 
     // Handle time period change (button click)
     const changeTimePeriod = (newTimePeriod: string) => {
@@ -107,6 +124,7 @@ export default defineComponent({
 
 <style scoped>
 .price-changing-component {
+  position: relative;
   flex: 1 1 70%; /* Flex-grow, flex-shrink, and base width */
   display: flex;
   flex-direction: column;
@@ -134,13 +152,16 @@ button:hover {
 
 .usd-label {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: 25px;
+  left: 3%;
   color: white;
   font-size: 18px;
   font-weight: bold;
 }
-
+.canvas-container {
+  width: 100%;
+  position: relative;
+}
 .buttons {
   display: flex;
   justify-content: center;
@@ -148,6 +169,8 @@ button:hover {
 }
 
 canvas {
-  margin-top: 20px;
+  margin-top: 5px;
+  display: block;
+  width: 100%;
 }
 </style>
