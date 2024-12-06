@@ -19,7 +19,6 @@
     </div>
   </div>
 </template>
-
 <script lang="ts">
 import { defineComponent, onMounted, ref } from 'vue';
 
@@ -39,46 +38,95 @@ export default defineComponent({
       drawPriceChanges();
     };
 
-    // Draw the price changes on the canvas
+    // Draw the price changes on the canvas with axes
     const drawPriceChanges = () => {
-      if (priceCanvas.value && stockData.value.length > 0) {
-        const canvas = priceCanvas.value;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          // Set canvas dimensions dynamically
-          const canvasWidth = canvas.clientWidth;
-          const canvasHeight = canvas.clientHeight;
-          canvas.width = canvasWidth;
-          canvas.height = canvasHeight;
+  if (priceCanvas.value && stockData.value.length > 0) {
+    const canvas = priceCanvas.value;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      // Set canvas dimensions dynamically
+      const canvasWidth = canvas.clientWidth;
+      const canvasHeight = canvas.clientHeight;
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
 
-          // Clear the canvas
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Margins for all edges (left, right, top, bottom)
+      const leftMargin = 30;
+      const rightMargin = 30;
+      const topMargin = 30;
+      const bottomMargin = 30;
 
-          // Set background
-          ctx.fillStyle = '#000';
-          ctx.fillRect(0, 0, canvas.width, canvas.height);
+      // Clear the canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-          // Set line styles
-          ctx.strokeStyle = '#00ff00'; // Green line
-          ctx.lineWidth = 2;
+      // Set background
+      ctx.fillStyle = '#000';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-          // Draw stock data line
-          ctx.beginPath();
-          stockData.value.forEach((price, index) => {
-            // Calculate X and Y coordinates
-            const x = (index / (stockData.value.length - 1)) * canvas.width;
-            const y = canvas.height - (price / 100) * canvas.height; // Scale price to canvas height
+      // Draw vertical lines for the left axis
+      const maxPrice = 100; // Maximum price for scaling
+      const minPrice = 0; // Minimum price
+      const numVerticalLines = 5; // Number of value markers
+      const verticalGap = (canvasHeight - topMargin - bottomMargin) / numVerticalLines;
 
-            if (index === 0) {
-              ctx.moveTo(x, y); // Start point
-            } else {
-              ctx.lineTo(x, y); // Line to next point
-            }
-          });
-          ctx.stroke(); // Render the line
-        }
+      ctx.strokeStyle = '#555';
+      ctx.lineWidth = 1;
+      ctx.fillStyle = '#fff';
+      ctx.font = '12px Arial';
+
+      for (let i = 0; i <= numVerticalLines; i++) {
+        const y = canvasHeight - bottomMargin - i * verticalGap;
+        const priceValue = ((i / numVerticalLines) * (maxPrice - minPrice)) + minPrice;
+
+        // Draw grid line
+        ctx.beginPath();
+        ctx.moveTo(leftMargin, y);
+        ctx.lineTo(canvasWidth - rightMargin, y);
+        ctx.stroke();
+
+        // Draw price label on the left side of the vertical line
+        ctx.fillText(priceValue.toFixed(0), leftMargin - 25, y + 5); // Position label to the left
       }
-    };
+
+      // Draw horizontal lines for the bottom axis (time markers)
+      const numTimeMarkers = 6; // Number of time markers
+      const timeGap = (canvasWidth - leftMargin - rightMargin) / (numTimeMarkers - 1);
+      const timeLabels = ['0s', '4h', '8h', '12h', '16h', '24h']; // Example time labels
+
+      for (let i = 0; i < numTimeMarkers; i++) {
+        const x = leftMargin + i * timeGap;
+
+        // Draw grid line
+        ctx.beginPath();
+        ctx.moveTo(x, topMargin);
+        ctx.lineTo(x, canvasHeight - bottomMargin);
+        ctx.stroke();
+
+        // Draw time label with padding
+        ctx.fillText(timeLabels[i], x - 10, canvasHeight - bottomMargin + 15); // Position with padding
+      }
+
+      // Draw stock data line
+      ctx.strokeStyle = '#00ff00'; // Green line
+      ctx.lineWidth = 2;
+
+      ctx.beginPath();
+      stockData.value.forEach((price, index) => {
+        const x = leftMargin + (index / (stockData.value.length - 1)) * (canvas.width - leftMargin - rightMargin);
+        const y = canvas.height - bottomMargin - (price / maxPrice) * (canvas.height - topMargin - bottomMargin);
+
+        if (index === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+      });
+      ctx.stroke();
+    }
+  }
+};
+
+
 
     // Handle time period change (currently regenerates random data)
     const changeTimePeriod = (newTimePeriod: string) => {
@@ -97,6 +145,7 @@ export default defineComponent({
   },
 });
 </script>
+
 
 <style scoped>
 .price-changing-component {
@@ -148,5 +197,6 @@ canvas {
   margin-top: 5px;
   display: block;
   width: 100%;
+  padding: 10px;
 }
 </style>
