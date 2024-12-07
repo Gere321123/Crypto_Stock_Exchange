@@ -10,8 +10,6 @@ app = Flask(__name__)
 
 import requests
 
-
-
 CONTRACT_ABI = [
     {
         "type": "function",

@@ -68,6 +68,13 @@ def init_db():
             max_price_5y REAL,   -- Maximum price in the last 5 years
             min_price_all REAL,  -- Minimum price for all-time
             max_price_all REAL,  -- Maximum price for all-time
+            index_price_24 INTEGER,
+            index_price_5d INTEGER,
+            index_price_1m INTEGER,
+            index_price_3m INTEGER,
+            index_price_1y INTEGER,
+            index_price_5y INTEGER,
+            index_price_all INTEGER,    
             FOREIGN KEY(username) REFERENCES user(username)
         )''')
 

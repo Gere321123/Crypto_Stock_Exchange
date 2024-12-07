@@ -91,7 +91,7 @@ export default defineComponent({
       // Draw horizontal lines for the bottom axis (time markers)
       const numTimeMarkers = 6; // Number of time markers
       const timeGap = (canvasWidth - leftMargin - rightMargin) / (numTimeMarkers - 1);
-      const timeLabels = ['0s', '4h', '8h', '12h', '16h', '24h']; // Example time labels
+      const timeLabels = ['0h', '4h', '8h', '12h', '16h', '24h']; // Example time labels
 
       for (let i = 0; i < numTimeMarkers; i++) {
         const x = leftMargin + i * timeGap;

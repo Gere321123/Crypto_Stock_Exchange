@@ -69,9 +69,9 @@ def stocks():
                 profit_1m, profit_3m, profit_1y, profit_5y, profit_all, network, country, 
                 min_price_24, max_price_24, min_price_5d, max_price_5d, min_price_1m, max_price_1m,
                 min_price_3m, max_price_3m, min_price_1y, max_price_1y, min_price_5y, max_price_5y,
-                min_price_all, max_price_all)
+                min_price_all, max_price_all, index_price_24, index_price_5d, index_price_1m, index_price_3m, index_price_1y, index_price_5y, index_price_all)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
-                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
+                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''', 
                 (data['url'], data['companyname'], data['description'], data['long_description'],
                 data['picture_url'], data['wallpaper_url'], other_pictures_json, annual_demand_json,
                 data['website'], data['number_of_stock'], data['virtual_Bit'], data['username'], 
@@ -80,7 +80,7 @@ def stocks():
                 price_history_empty, price_history_empty, price_history_empty, profit_zero, profit_zero,
                 profit_zero, profit_zero, profit_zero, profit_zero, profit_zero, data['network'], 
                 data['country'], min_price, max_price, min_price, max_price, min_price, max_price, 
-                min_price, max_price, min_price, max_price, min_price, max_price, min_price, max_price))
+                min_price, max_price, min_price, max_price, min_price, max_price, min_price, max_price, 1, 1, 1, 1, 1, 1, 1))
 
                 conn.commit()
         except Exception as e:
