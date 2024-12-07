@@ -4,7 +4,7 @@ import sqlite3
 import schedule
 import time
 import threading
-
+import json
 # Initialize Flask app
 app = Flask(__name__)
 
@@ -40,12 +40,12 @@ def update_stock_prices():
         cursor = conn.cursor()
 
         # Fetch all stocks from the database
-        cursor.execute("SELECT id, url, network FROM stock")
+        cursor.execute("SELECT id, url, network, price_history_24, index_price_24 FROM stock")
         stocks = cursor.fetchall()
 
         for stock in stocks:
-            stock_id, contract_address, network = stock
-
+            stock_id, contract_address, network, price_history_24, index_price_24 = stock
+            price_history_24_array = json.loads(price_history_24)
             # Skip if necessary fields are missing
             if not contract_address or not network:
                 print(f"Skipping stock ID {stock_id}: Missing contract address or network.")
@@ -65,10 +65,15 @@ def update_stock_prices():
                 # Calculate the token value in USD
                 token_value_in_usd = get_bitcoin_value(token_value_in_bitcoin)
 
+                price_history_24_array[index_price_24] = token_value_in_usd
+
+                index_price_24 += 1
+
+                price_history_24 = json.dumps(price_history_24_array)
                 # Update price and priceinUSD in the database
                 cursor.execute(
-                    "UPDATE stock SET price = ?, priceinUSD = ? WHERE id = ?",
-                    (token_value_in_bitcoin, token_value_in_usd, stock_id),
+                    "UPDATE stock SET price = ?, priceinUSD = ?, price_history_24 = ?, index_price_24 = ? WHERE id = ?",
+                    (token_value_in_bitcoin, token_value_in_usd, stock_id, price_history_24, index_price_24),
                 )
                 #print(f"Updated stock ID {stock_id}: price = {token_value_in_bitcoin}, priceinUSD = {token_value_in_usd}")
 
