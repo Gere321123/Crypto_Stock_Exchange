@@ -56,7 +56,13 @@ This document outlines the structure of the `stock` table in the database, inclu
 | 47    | `max_price_5y`     | `REAL`          | Maximum price in the last 5 years.                                       |
 | 48    | `min_price_all`    | `REAL`          | Minimum price for all-time.                                              |
 | 49    | `max_price_all`    | `REAL`          | Maximum price for all-time.                                              |
-
+| 51    | `index_price_24`        | INTEGER     | Index value of the price in the last 24 hours.                           |
+| 52    | `index_price_5d`        | INTEGER     | Index value of the price in the last 5 days.                             |
+| 53    | `index_price_1m`        | INTEGER     | Index value of the price in the last 1 month.                            |
+| 54    | `index_price_3m`        | INTEGER     | Index value of the price in the last 3 months.                           |
+| 55    | `index_price_1y`        | INTEGER     | Index value of the price in the last 1 year.                             |
+| 56    | `index_price_5y`        | INTEGER     | Index value of the price in the last 5 years.                            |
+| 57    | `index_price_all`       | INTEGER     | Index value of the price for all-time.                                   |
 ---
 
 ### Notes:
