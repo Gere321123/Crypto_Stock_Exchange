@@ -19,124 +19,165 @@
     </div>
   </div>
 </template>
+
 <script lang="ts">
-import { defineComponent, onMounted, ref } from 'vue';
+import { defineComponent, onMounted, ref, watch } from 'vue';
 
 export default defineComponent({
   name: 'PriceChangingComponent',
-  setup() {
+  props: {
+    company: {
+      type: Array,
+      required: true,
+    },
+  },
+  setup(props) {
     const priceCanvas = ref<HTMLCanvasElement | null>(null);
-    const stockData = ref<number[]>([]); // Random stock data array
+    const stockData = ref<number[]>([]); // Placeholder for the stock data
     const timePeriod = ref('24h'); // Default time period
 
-    // Generate random stock data
-    const generateRandomStockData = () => {
-      const data = Array.from({ length: 1440 }, () =>
-        Math.random() * 100 // Random numbers between 0 and 100
-      );
-      stockData.value = data;
-      drawPriceChanges();
+    // Fetch stock data from company[20] dynamically
+    const fetchStockData = () => {
+      if (props.company && props.company.length > 20) {
+      try {
+        // Type assertion to ensure props.company[20] is treated as a string
+        const arrayData = JSON.parse(props.company[20] as string);
+        stockData.value = Array.isArray(arrayData) ? arrayData : [];
+        drawPriceChanges();
+      } catch (error) {
+        console.error("Invalid JSON string:", error);
+      }
+}
+
     };
 
     // Draw the price changes on the canvas with axes
     const drawPriceChanges = () => {
-  if (priceCanvas.value && stockData.value.length > 0) {
-    const canvas = priceCanvas.value;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      // Set canvas dimensions dynamically
-      const canvasWidth = canvas.clientWidth;
-      const canvasHeight = canvas.clientHeight;
-      canvas.width = canvasWidth;
-      canvas.height = canvasHeight;
+      if (priceCanvas.value && stockData.value.length > 0) {
+        const canvas = priceCanvas.value;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          // Set canvas dimensions dynamically
+          const canvasWidth = canvas.clientWidth;
+          const canvasHeight = canvas.clientHeight;
+          canvas.width = canvasWidth;
+          canvas.height = canvasHeight;
 
-      // Margins for all edges (left, right, top, bottom)
-      const leftMargin = 30;
-      const rightMargin = 30;
-      const topMargin = 30;
-      const bottomMargin = 30;
+          // Margins for all edges (left, right, top, bottom)
+          const leftMargin = 30;
+          const rightMargin = 30;
+          const topMargin = 30;
+          const bottomMargin = 30;
 
-      // Clear the canvas
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+          // Clear the canvas
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Set background
-      ctx.fillStyle = '#000';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+          // Set background
+          ctx.fillStyle = '#000';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Draw vertical lines for the left axis
-      const maxPrice = 100; // Maximum price for scaling
-      const minPrice = 0; // Minimum price
-      const numVerticalLines = 5; // Number of value markers
-      const verticalGap = (canvasHeight - topMargin - bottomMargin) / numVerticalLines;
+          // Draw vertical lines for the left axis
+          const maxPrice = 100; // Maximum price
+          const minPrice = 0; // Minimum price
+          const numVerticalLines = 5; // Number of value markers
+          const verticalGap = (canvasHeight - topMargin - bottomMargin) / numVerticalLines;
 
-      ctx.strokeStyle = '#555';
-      ctx.lineWidth = 1;
-      ctx.fillStyle = '#fff';
-      ctx.font = '12px Arial';
+          ctx.strokeStyle = '#555';
+          ctx.lineWidth = 1;
+          ctx.fillStyle = '#fff';
+          ctx.font = '12px Arial';
 
-      for (let i = 0; i <= numVerticalLines; i++) {
-        const y = canvasHeight - bottomMargin - i * verticalGap;
-        const priceValue = ((i / numVerticalLines) * (maxPrice - minPrice)) + minPrice;
+          for (let i = 0; i <= numVerticalLines; i++) {
+            const y = canvasHeight - bottomMargin - i * verticalGap;
+            const priceValue =
+              ((i / numVerticalLines) * (maxPrice - minPrice)) + minPrice;
 
-        // Draw grid line
-        ctx.beginPath();
-        ctx.moveTo(leftMargin, y);
-        ctx.lineTo(canvasWidth - rightMargin, y);
-        ctx.stroke();
+            // Draw grid line
+            ctx.beginPath();
+            ctx.moveTo(leftMargin, y);
+            ctx.lineTo(canvasWidth - rightMargin, y);
+            ctx.stroke();
 
-        // Draw price label on the left side of the vertical line
-        ctx.fillText(priceValue.toFixed(0), leftMargin - 25, y + 5); // Position label to the left
-      }
+            // Draw price label on the left side of the vertical line
+            ctx.fillText(priceValue.toFixed(0), leftMargin - 25, y + 5); // Position label to the left
+          }
 
-      // Draw horizontal lines for the bottom axis (time markers)
-      const numTimeMarkers = 6; // Number of time markers
-      const timeGap = (canvasWidth - leftMargin - rightMargin) / (numTimeMarkers - 1);
-      const timeLabels = ['0h', '4h', '8h', '12h', '16h', '24h']; // Example time labels
+          // Draw horizontal lines for the bottom axis (time markers)
+          const numTimeMarkers = 6; // Number of time markers
+          const timeGap =
+            (canvasWidth - leftMargin - rightMargin) / (numTimeMarkers - 1);
+          const timeLabels = ['0h', '4h', '8h', '12h', '16h', '24h']; // Example time labels
 
-      for (let i = 0; i < numTimeMarkers; i++) {
-        const x = leftMargin + i * timeGap;
+          for (let i = 0; i < numTimeMarkers; i++) {
+            const x = leftMargin + i * timeGap;
 
-        // Draw grid line
-        ctx.beginPath();
-        ctx.moveTo(x, topMargin);
-        ctx.lineTo(x, canvasHeight - bottomMargin);
-        ctx.stroke();
+            // Draw grid line
+            ctx.beginPath();
+            ctx.moveTo(x, topMargin);
+            ctx.lineTo(x, canvasHeight - bottomMargin);
+            ctx.stroke();
 
-        // Draw time label with padding
-        ctx.fillText(timeLabels[i], x - 10, canvasHeight - bottomMargin + 15); // Position with padding
-      }
+            // Draw time label with padding
+            ctx.fillText(
+              timeLabels[i],
+              x - 10,
+              canvasHeight - bottomMargin + 15
+            ); // Position with padding
+          }
 
-      // Draw stock data line
-      ctx.strokeStyle = '#00ff00'; // Green line
-      ctx.lineWidth = 2;
+          // Draw stock data points and lines
+          ctx.strokeStyle = '#00ff00'; // Green line
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          let lastValidX: number | null = null;
+          let lastValidY: number | null = null;
 
-      ctx.beginPath();
-      stockData.value.forEach((price, index) => {
-        const x = leftMargin + (index / (stockData.value.length - 1)) * (canvas.width - leftMargin - rightMargin);
-        const y = canvas.height - bottomMargin - (price / maxPrice) * (canvas.height - topMargin - bottomMargin);
+          stockData.value.forEach((price, index) => {
+            const x =
+              leftMargin +
+              (index / (stockData.value.length - 1)) *
+                (canvas.width - leftMargin - rightMargin);
+            const y =
+              canvas.height -
+              bottomMargin -
+              ((price - minPrice) / (maxPrice - minPrice)) *
+                (canvas.height - topMargin - bottomMargin);
 
-        if (index === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
+            if (price !== -1) {
+              // Draw a point
+              ctx.fillStyle = '#ff0000'; // Red point
+              ctx.beginPath();
+              ctx.arc(x, y, 3, 0, Math.PI * 2);
+              ctx.fill();
+
+              // Draw a line if the previous point exists
+              if (lastValidX !== null && lastValidY !== null) {
+                ctx.strokeStyle = '#00ff00';
+                ctx.beginPath();
+                ctx.moveTo(lastValidX, lastValidY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+              }
+
+              lastValidX = x;
+              lastValidY = y;
+            }
+          });
         }
-      });
-      ctx.stroke();
-    }
-  }
-};
+      }
+    };
 
-
-
-    // Handle time period change (currently regenerates random data)
+    // Handle time period change (currently refetches stock data)
     const changeTimePeriod = (newTimePeriod: string) => {
       timePeriod.value = newTimePeriod;
-      generateRandomStockData();
+      fetchStockData();
     };
 
     onMounted(() => {
-      generateRandomStockData(); // Generate initial data on mount
+      fetchStockData(); // Fetch initial data on mount
     });
+
+    watch(() => props.company, fetchStockData); // React to company prop changes
 
     return {
       priceCanvas,
@@ -145,6 +186,7 @@ export default defineComponent({
   },
 });
 </script>
+
 
 
 <style scoped>
