@@ -22,7 +22,7 @@ CONTRACT_ABI = [
 # Database connection
 DATABASE = "cryptostock.db"
 
-def get_bitcoin_value(btc_amount, max_retries=5, backoff_factor=2):
+def get_bitcoin_value(btc_amount, previous_value, max_retries=5, backoff_factor=2):
     """
     Fetch the current Bitcoin price in USD and calculate the value for the given amount of Bitcoin.
     Includes error handling and retry logic with exponential backoff.
@@ -45,7 +45,7 @@ def get_bitcoin_value(btc_amount, max_retries=5, backoff_factor=2):
 
     # If all retries fail, return a fallback value or raise an exception
     print("Failed to fetch Bitcoin price after multiple retries.")
-    raise Exception("Unable to fetch Bitcoin price.")
+    return previous_value
 
 # Function to update stock prices in the database
 def update_stock_prices():
@@ -78,7 +78,7 @@ def update_stock_prices():
                 # Convert Wei to Bitcoin (1 Bitcoin = 10**18 Wei)
                 token_value_in_bitcoin = token_value_in_wei / (10 **18)
                 # Calculate the token value in USD
-                token_value_in_usd = get_bitcoin_value(token_value_in_bitcoin)
+                token_value_in_usd = get_bitcoin_value(token_value_in_bitcoin,price_history_24_array[index_price_24 - 1])
 
                 price_history_24_array[index_price_24] = token_value_in_usd
 

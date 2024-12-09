@@ -1,11 +1,11 @@
 <template>
   <div class="transaction-section">
-    <a v-if="company[6]" :href="company[9]" target="_blank" rel="noopener noreferrer">
-     <img :src="company[6]" alt="Company Wallpaper" />
+    <a v-if="stock[6]" :href="stock[9]" target="_blank" rel="noopener noreferrer">
+     <img :src="stock[6]" alt="Company Wallpaper" />
     </a>
   <br>
-  <a v-if="company[2]" :href="company[9]" target="_blank" rel="noopener noreferrer" class="company-link">
-  <h2>{{ company[2] }}</h2>
+  <a v-if="stock[2]" :href="stock[9]" target="_blank" rel="noopener noreferrer" class="company-link">
+  <h2>{{ stock[2] }}</h2>
   </a>
     <div class="price-container">
     <div class="price-box">
@@ -17,13 +17,13 @@
     </div>
     <div class="price-container">
     <div class="price-box">
-      <p>Market Cap: {{ company[13] }} $</p>
+      <p>Market Cap: {{ stock[13] }} $</p>
     </div>
     <div class="price-box">
-      <p>Number Of Tokens: {{ company[10] }} </p>
+      <p>Number Of Tokens: {{ stock[10] }} </p>
     </div>
     <div class="price-box">
-      <p>Number Of Available Tokens: {{ company[14] }} </p>
+      <p>Number Of Available Tokens: {{ stock[14] }} </p>
     </div>
   </div>
     <button @click="toggleBuy">Buy Tokens</button>
@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, onUnmounted, reactive  } from 'vue';
+import { defineComponent, ref, onMounted, onUnmounted } from 'vue';
 import { useReadContract } from '@wagmi/vue'
 import { abi } from '../../abi'
 import { config } from '../../../config'
@@ -67,7 +67,7 @@ export default defineComponent({
   },
 },
   setup(props) {
-    const stock = reactive([...props.company]);
+    const stock = ref([...props.company]);
     const connectComponent = ref();
     const { data, isError, isLoading, error } = useReadContract({
     abi,
@@ -137,8 +137,7 @@ export default defineComponent({
       try {
         const response = await fetch(`http://localhost:5000/stocks/${props.company[0]}`);
         const data = await response.json();
-        stock[16] = data.stock[16];
-        stock[17] = data.stock[17]; 
+        stock.value = data.stock;
       } catch (error) {
         console.error('Error fetching company details:', error);
       }
@@ -148,7 +147,7 @@ export default defineComponent({
   fetchCompanyDetails(); // Initial fetch
   refreshInterval.value = setInterval(() => {
     fetchCompanyDetails(); // Periodic fetch
-  }, 60000); // 1 second
+  }, 60000); // 1 minute
 };
 
     const stopRefreshing = () => {
