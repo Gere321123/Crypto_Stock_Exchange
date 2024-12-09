@@ -55,8 +55,8 @@ def stocks():
             profit_zero = 0
             
             # Initialize min and max price fields
-            min_price = priceinUSD * 0.95
-            max_price = priceinUSD * 1.05
+            min_price = priceinUSD * 0.99
+            max_price = priceinUSD * 1.01
             
             with sqlite3.connect("cryptostock.db") as conn:
                 cursor = conn.cursor()

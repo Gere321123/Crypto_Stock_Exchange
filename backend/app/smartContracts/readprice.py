@@ -71,11 +71,11 @@ def update_stock_prices():
 
                 price_history_24 = json.dumps(price_history_24_array)
 
-                if (token_value_in_usd < min_price_24 * 1.01):
-                    min_price_24 *= 0.99
+                if (token_value_in_usd < min_price_24 * 1.001):
+                    min_price_24 *= 0.999
 
-                if (token_value_in_usd > max_price_24 * 0.99):
-                    max_price_24 *= 1.01
+                if (token_value_in_usd > max_price_24 * 0.999):
+                    max_price_24 *= 1.001
                 # Update price and priceinUSD in the database
                 cursor.execute(
                     "UPDATE stock SET price = ?, priceinUSD = ?, price_history_24 = ?, index_price_24 = ?, max_price_24 = ?, min_price_24 = ?  WHERE id = ?",
