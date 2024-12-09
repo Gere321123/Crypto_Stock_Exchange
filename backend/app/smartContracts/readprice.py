@@ -22,15 +22,30 @@ CONTRACT_ABI = [
 # Database connection
 DATABASE = "cryptostock.db"
 
-def get_bitcoin_value(btc_amount):
-    # Fetch the current Bitcoin price in USD
-    response = requests.get('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
-    data = response.json()
-    btc_price = data['bitcoin']['usd']
-    
-    # Calculate the USD value of the given Bitcoin amount
-    usd_value = btc_amount * btc_price
-    return usd_value
+def get_bitcoin_value(btc_amount, max_retries=5, backoff_factor=2):
+    """
+    Fetch the current Bitcoin price in USD and calculate the value for the given amount of Bitcoin.
+    Includes error handling and retry logic with exponential backoff.
+    """
+    url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd'
+    retries = 0
+
+    while retries < max_retries:
+        try:
+            response = requests.get(url, timeout=10)  # Added timeout to avoid hanging requests
+            response.raise_for_status()  # Raise an error for HTTP status codes 4xx/5xx
+            data = response.json()
+            btc_price = data['bitcoin']['usd']
+            usd_value = btc_amount * btc_price
+            return usd_value
+        except requests.RequestException as e:
+            print(f"Error fetching Bitcoin price: {e}. Retrying in {backoff_factor ** retries} seconds...")
+            retries += 1
+            time.sleep(backoff_factor ** retries)
+
+    # If all retries fail, return a fallback value or raise an exception
+    print("Failed to fetch Bitcoin price after multiple retries.")
+    raise Exception("Unable to fetch Bitcoin price.")
 
 # Function to update stock prices in the database
 def update_stock_prices():
@@ -68,6 +83,14 @@ def update_stock_prices():
                 price_history_24_array[index_price_24] = token_value_in_usd
 
                 index_price_24 += 1
+
+                if index_price_24 >= 1440:
+                    for i in range(len(price_history_24_array)):
+                        if i == 0:
+                            price_history_24_array[0] = price_history_24_array[1439]
+                        else:
+                            price_history_24_array[i] = -1
+                    index_price_24 = 1
 
                 price_history_24 = json.dumps(price_history_24_array)
 
