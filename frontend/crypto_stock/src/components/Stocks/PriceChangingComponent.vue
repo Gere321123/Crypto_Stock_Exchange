@@ -38,7 +38,7 @@ export default defineComponent({
 
     // Fetch stock data from company[20] dynamically
     const fetchStockData = () => {
-      if (props.company && props.company.length > 20) {
+      if (props.company) {
       try {
         // Type assertion to ensure props.company[20] is treated as a string
         const arrayData = JSON.parse(props.company[20] as string);
@@ -77,8 +77,8 @@ export default defineComponent({
           ctx.fillRect(0, 0, canvas.width, canvas.height);
 
           // Draw vertical lines for the left axis
-          const maxPrice = 100; // Maximum price
-          const minPrice = 0; // Minimum price
+          const maxPrice = Number(props.company[37]); // Maximum price
+          const minPrice = Number(props.company[36]); // Minimum price
           const numVerticalLines = 5; // Number of value markers
           const verticalGap = (canvasHeight - topMargin - bottomMargin) / numVerticalLines;
 
