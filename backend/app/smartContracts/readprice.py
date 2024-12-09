@@ -40,11 +40,11 @@ def update_stock_prices():
         cursor = conn.cursor()
 
         # Fetch all stocks from the database
-        cursor.execute("SELECT id, url, network, price_history_24, index_price_24 FROM stock")
+        cursor.execute("SELECT id, url, network, price_history_24, index_price_24, max_price_24, min_price_24 FROM stock")
         stocks = cursor.fetchall()
 
         for stock in stocks:
-            stock_id, contract_address, network, price_history_24, index_price_24 = stock
+            stock_id, contract_address, network, price_history_24, index_price_24, max_price_24, min_price_24  = stock
             price_history_24_array = json.loads(price_history_24)
             # Skip if necessary fields are missing
             if not contract_address or not network:
@@ -70,10 +70,16 @@ def update_stock_prices():
                 index_price_24 += 1
 
                 price_history_24 = json.dumps(price_history_24_array)
+
+                if (token_value_in_usd < min_price_24 * 1.01):
+                    min_price_24 *= 0.99
+
+                if (token_value_in_usd > max_price_24 * 0.99):
+                    max_price_24 *= 1.01
                 # Update price and priceinUSD in the database
                 cursor.execute(
-                    "UPDATE stock SET price = ?, priceinUSD = ?, price_history_24 = ?, index_price_24 = ? WHERE id = ?",
-                    (token_value_in_bitcoin, token_value_in_usd, price_history_24, index_price_24, stock_id),
+                    "UPDATE stock SET price = ?, priceinUSD = ?, price_history_24 = ?, index_price_24 = ?, max_price_24 = ?, min_price_24 = ?  WHERE id = ?",
+                    (token_value_in_bitcoin, token_value_in_usd, price_history_24, index_price_24, max_price_24, min_price_24, stock_id),
                 )
                 #print(f"Updated stock ID {stock_id}: price = {token_value_in_bitcoin}, priceinUSD = {token_value_in_usd}")
 

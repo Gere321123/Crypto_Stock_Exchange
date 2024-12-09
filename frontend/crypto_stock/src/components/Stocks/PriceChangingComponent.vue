@@ -64,7 +64,7 @@ export default defineComponent({
           canvas.height = canvasHeight;
 
           // Margins for all edges (left, right, top, bottom)
-          const leftMargin = 30;
+          const leftMargin = 40;
           const rightMargin = 30;
           const topMargin = 30;
           const bottomMargin = 30;
@@ -99,14 +99,14 @@ export default defineComponent({
             ctx.stroke();
 
             // Draw price label on the left side of the vertical line
-            ctx.fillText(priceValue.toFixed(0), leftMargin - 25, y + 5); // Position label to the left
+            ctx.fillText(priceValue.toFixed(3), leftMargin - 35, y + 5); // Position label to the left
           }
 
           // Draw horizontal lines for the bottom axis (time markers)
           const numTimeMarkers = 6; // Number of time markers
           const timeGap =
             (canvasWidth - leftMargin - rightMargin) / (numTimeMarkers - 1);
-          const timeLabels = ['0h', '4h', '8h', '12h', '16h', '24h']; // Example time labels
+          const timeLabels = ['', '4h', '8h', '12h', '16h', '24h']; // Example time labels
 
           for (let i = 0; i < numTimeMarkers; i++) {
             const x = leftMargin + i * timeGap;
