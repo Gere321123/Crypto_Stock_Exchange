@@ -73,7 +73,7 @@ def update_stock_prices():
                 # Update price and priceinUSD in the database
                 cursor.execute(
                     "UPDATE stock SET price = ?, priceinUSD = ?, price_history_24 = ?, index_price_24 = ? WHERE id = ?",
-                    (token_value_in_bitcoin, token_value_in_usd, stock_id, price_history_24, index_price_24),
+                    (token_value_in_bitcoin, token_value_in_usd, price_history_24, index_price_24, stock_id),
                 )
                 #print(f"Updated stock ID {stock_id}: price = {token_value_in_bitcoin}, priceinUSD = {token_value_in_usd}")
 
@@ -87,8 +87,6 @@ def update_stock_prices():
     except Exception as e:
         print(f"Error updating stock prices: {e}")
 
-# Schedule the task every minute
-#schedule.every(1).minute.do(update_stock_prices)
 
 def start_schedule():
     schedule.every(1).minutes.do(update_stock_prices)
