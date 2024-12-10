@@ -27,7 +27,7 @@ export default defineComponent({
   name: 'PriceChangingComponent',
   props: {
     company: {
-      type: Array,
+      type: Array as () => Array<any>, // Specify that `company` is an array
       required: true,
     },
   },
@@ -39,16 +39,18 @@ export default defineComponent({
 
     // Fetch stock data from company[20] dynamically
     const fetchStockData = () => {
-      if (props.company) {
-        try {
-          const arrayData = JSON.parse(props.company[20] as string);
-          stockData.value = Array.isArray(arrayData) ? arrayData : [];
-          drawPriceChanges();
-        } catch (error) {
-          //her the error
-          console.error('Invalid JSON string:', error);
+      if (Array.isArray(props.company) && typeof props.company[20] === 'string') {
+          try {
+            const arrayData = JSON.parse(props.company[20]);
+            stockData.value = Array.isArray(arrayData) ? arrayData : [];
+            drawPriceChanges();
+          } catch (error) {
+            console.error('Invalid JSON string:', error);
+          }
+        } else {
+          console.error('props.company[20] is not available or invalid');
+          stockData.value = []; // Default to an empty array
         }
-      }
     };
 
     // Draw the price changes on the canvas with axes

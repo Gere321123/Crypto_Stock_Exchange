@@ -1,38 +1,39 @@
 <template>
   <div class="transaction-section">
-    <a v-if="stock[6]" :href="stock[9]" target="_blank" rel="noopener noreferrer">
-     <img :src="stock[6]" alt="Company Wallpaper" />
+    <a v-if="company[6]" :href="company[9]" target="_blank" rel="noopener noreferrer">
+      <img :src="company[6]" alt="Company Wallpaper" />
     </a>
-  <br>
-  <a v-if="stock[2]" :href="stock[9]" target="_blank" rel="noopener noreferrer" class="company-link">
-  <h2>{{ stock[2] }}</h2>
-  </a>
+    <br>
+    <a v-if="company[2]" :href="company[9]" target="_blank" rel="noopener noreferrer" class="company-link">
+      <h2>{{ company[2] }}</h2>
+    </a>
     <div class="price-container">
-    <div class="price-box">
-      <p>In BIT: {{ stock[16] }} BIT</p>
-    </div>
-    <div class="price-box">
-      <p>In USD: {{ parseFloat(stock[17]).toFixed(5) }} $</p>
-    </div>
+      <div class="price-box">
+        <p>In BIT: {{ company[16] }} BIT</p>
+      </div>
+      <div class="price-box">
+        <p>In USD: {{ parseFloat(company[17]).toFixed(5) }} $</p>
+      </div>
     </div>
     <div class="price-container">
-    <div class="price-box">
-      <p>Market Cap: {{ stock[13] }} $</p>
+      <div class="price-box">
+        <p>Market Cap: {{ company[13] }} $</p>
+      </div>
+      <div class="price-box">
+        <p>Number Of Tokens: {{ company[10] }}</p>
+      </div>
+      <div class="price-box">
+        <p>Number Of Available Tokens: {{ company[14] }}</p>
+      </div>
     </div>
-    <div class="price-box">
-      <p>Number Of Tokens: {{ stock[10] }} </p>
-    </div>
-    <div class="price-box">
-      <p>Number Of Available Tokens: {{ stock[14] }} </p>
-    </div>
-  </div>
     <button @click="toggleBuy">Buy Tokens</button>
     <button @click="toggleSell">Sell Tokens</button>
-    <button @click="getvalue">Value</button>
+    <button @click="getValue">Value</button>
+    
     <!-- Buy Input -->
     <div v-if="showBuy">
       <label>BIT to spend:</label>
-      <input v-model="ethAmount" type="number" @input="calculateTokens" placeholder="Enter ETH amount" />
+      <input v-model="ethAmount" type="number" @input="calculateTokens" placeholder="Enter BIT amount" />
       <p>You will receive: {{ tokensToReceive }} tokens</p>
     </div>
 
@@ -51,50 +52,21 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, onMounted, onUnmounted } from 'vue';
-import { useReadContract } from '@wagmi/vue'
-import { abi } from '../../abi'
-import { config } from '../../../config'
+import { defineComponent, ref } from 'vue';
 import Connect from './Connect.vue';
 
 export default defineComponent({
   name: 'TransactionSection',
   components: { Connect },
   props: {
-  company: {
-    type: Array as () => Array<any>, // Specify that `company` is an array
-    required: true,
+    company: {
+      type: Array as () => Array<any>, // Specify that `company` is an array
+      required: true,
+    },
   },
-},
   setup(props) {
-    const stock = ref([...props.company]);
     const connectComponent = ref();
-    const { data, isError, isLoading, error } = useReadContract({
-    abi,
-    address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
-    functionName: 'getValueOfOneTokenInWei',
-    config: config
-  });
-  // Method to log the contract value
-  const getvalue = async () => {
-    try {
-      console.log('Loading data...');
-      while (isLoading.value) {
-        await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for 100ms
-      }
 
-      if (isError.value) {
-        console.error('Error reading contract:', error.value);
-      } else if (data.value) {
-        console.log('Value of one token in Wei:', data.value.toString());
-      } else {
-        console.log('No data available');
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }
-  };
-    // Reactive refs for state
     const showBuy = ref(false);
     const showSell = ref(false);
     const ethAmount = ref(0);
@@ -131,39 +103,11 @@ export default defineComponent({
     const openWalletPopup = () => {
       connectComponent.value?.openModal();
     };
-    const refreshInterval = ref<ReturnType<typeof setInterval> | null>(null);
 
-    const fetchCompanyDetails = async () => {
-      try {
-        const response = await fetch(`http://localhost:5000/stocks/${props.company[0]}`);
-        const data = await response.json();
-        stock.value = data.stock;
-      } catch (error) {
-        console.error('Error fetching company details:', error);
-      }
+    const getValue = async () => {
+      console.log("Fetching contract value...");
+      // Here, you can integrate the existing contract logic if needed
     };
-
-    const startRefreshing = () => {
-  fetchCompanyDetails(); // Initial fetch
-  refreshInterval.value = setInterval(() => {
-    fetchCompanyDetails(); // Periodic fetch
-  }, 60000); // 1 minute
-};
-
-    const stopRefreshing = () => {
-      if (refreshInterval.value) {
-        clearInterval(refreshInterval.value);
-        refreshInterval.value = null;
-      }
-    };
-
-    onMounted(() => {
-      startRefreshing(); // Start refreshing when the component mounts
-    });
-
-    onUnmounted(() => {
-      stopRefreshing(); // Clean up the interval when the component unmounts
-    });
 
     return {
       showBuy,
@@ -173,13 +117,12 @@ export default defineComponent({
       tokensToReceive,
       ethToReceive,
       toggleBuy,
-      getvalue,
       toggleSell,
       calculateTokens,
       calculateEth,
       openWalletPopup,
       connectComponent,
-      stock,
+      getValue,
     };
   },
 });
