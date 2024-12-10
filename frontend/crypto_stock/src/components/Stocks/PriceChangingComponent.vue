@@ -45,6 +45,7 @@ export default defineComponent({
           stockData.value = Array.isArray(arrayData) ? arrayData : [];
           drawPriceChanges();
         } catch (error) {
+          //her the error
           console.error('Invalid JSON string:', error);
         }
       }
@@ -171,7 +172,6 @@ export default defineComponent({
     // Handle time period change (currently refetches stock data)
     const changeTimePeriod = (newTimePeriod: string) => {
       timePeriod.value = newTimePeriod;
-      fetchStockData();
     };
 
     // Automatically refresh stock data every minute
@@ -259,5 +259,6 @@ canvas {
   display: block;
   width: 100%;
   padding: 10px;
+  height: 100%; 
 }
 </style>
