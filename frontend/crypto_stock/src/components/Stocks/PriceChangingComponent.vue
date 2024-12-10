@@ -249,6 +249,7 @@ button:hover {
 .canvas-container {
   width: 100%;
   position: relative;
+  height: 100%;
 }
 .buttons {
   display: flex;
