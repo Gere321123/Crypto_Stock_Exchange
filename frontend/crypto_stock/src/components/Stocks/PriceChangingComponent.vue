@@ -11,6 +11,7 @@
       <button @click="changeTimePeriod('3m')">3m</button>
       <button @click="changeTimePeriod('1y')">1y</button>
       <button @click="changeTimePeriod('5y')">5y</button>
+      <button @click="changeTimePeriod('All')">All</button>
     </div>
 
     <!-- Canvas for displaying the stock price chart -->
@@ -36,21 +37,37 @@ export default defineComponent({
     const stockData = ref<number[]>([]); // Placeholder for the stock data
     const timePeriod = ref('24h'); // Default time period
     let refreshInterval: number | null = null; // To store the interval ID
+    let canvasWidth = 0;
+    let canvasHeight = 0;
 
     // Fetch stock data from company[20] dynamically
     const fetchStockData = () => {
       if (Array.isArray(props.company) && typeof props.company[20] === 'string') {
-          try {
-            const arrayData = JSON.parse(props.company[20]);
-            stockData.value = Array.isArray(arrayData) ? arrayData : [];
-            drawPriceChanges();
-          } catch (error) {
-            console.error('Invalid JSON string:', error);
-          }
-        } else {
-          console.error('props.company[20] is not available or invalid');
-          stockData.value = []; // Default to an empty array
+        try {
+          const arrayData = JSON.parse(props.company[20]);
+          stockData.value = Array.isArray(arrayData) ? arrayData : [];
+          drawPriceChanges();
+        } catch (error) {
+          console.error('Invalid JSON string:', error);
         }
+      } else {
+        console.error('props.company[20] is not available or invalid');
+        stockData.value = []; // Default to an empty array
+      }
+    };
+
+    // Initialize canvas dimensions once
+    const initializeCanvas = () => {
+      if (priceCanvas.value) {
+        const canvas = priceCanvas.value;
+        const parent = canvas.parentElement;
+        if (parent) {
+          canvasWidth = parent.clientWidth;
+          canvasHeight = parent.clientHeight;
+          canvas.width = canvasWidth;
+          canvas.height = canvasHeight;
+        }
+      }
     };
 
     // Draw the price changes on the canvas with axes
@@ -59,9 +76,7 @@ export default defineComponent({
         const canvas = priceCanvas.value;
         const ctx = canvas.getContext('2d');
         if (ctx) {
-          // Set canvas dimensions dynamically
-          const canvasWidth = canvas.clientWidth;
-          const canvasHeight = canvas.clientHeight;
+          // Use the initialized dimensions
           canvas.width = canvasWidth;
           canvas.height = canvasHeight;
 
@@ -97,7 +112,7 @@ export default defineComponent({
             // Draw grid line
             ctx.beginPath();
             ctx.moveTo(leftMargin, y);
-            ctx.lineTo(canvasWidth - rightMargin, y);
+            ctx.lineTo(canvas.width - rightMargin, y);
             ctx.stroke();
 
             // Draw price label on the left side of the vertical line
@@ -107,7 +122,7 @@ export default defineComponent({
           // Draw horizontal lines for the bottom axis (time markers)
           const numTimeMarkers = 6; // Number of time markers
           const timeGap =
-            (canvasWidth - leftMargin - rightMargin) / (numTimeMarkers - 1);
+            (canvas.width - leftMargin - rightMargin) / (numTimeMarkers - 1);
           const timeLabels = ['', '4h', '8h', '12h', '16h', '24h']; // Example time labels
 
           for (let i = 0; i < numTimeMarkers; i++) {
@@ -116,14 +131,14 @@ export default defineComponent({
             // Draw grid line
             ctx.beginPath();
             ctx.moveTo(x, topMargin);
-            ctx.lineTo(x, canvasHeight - bottomMargin);
+            ctx.lineTo(x, canvas.height - bottomMargin);
             ctx.stroke();
 
             // Draw time label with padding
             ctx.fillText(
               timeLabels[i],
               x - 10,
-              canvasHeight - bottomMargin + 15
+              canvas.height - bottomMargin + 15
             ); // Position with padding
           }
 
@@ -190,6 +205,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
+      initializeCanvas(); // Initialize canvas dimensions on mount
       fetchStockData(); // Fetch initial data on mount
       startAutoRefresh(); // Start auto-refresh
     });
@@ -226,16 +242,17 @@ export default defineComponent({
 
 button {
   margin: 5px;
-  padding: 10px 15px;
+  padding: 5px 7px;
   cursor: pointer;
-  background-color: #4CAF50;
+  background-color: #610954;
   color: white;
   border: none;
   border-radius: 5px;
+  font-size: 15px
 }
 
 button:hover {
-  background-color: #45a049;
+  background-color: #8a0c77;
 }
 
 .usd-label {
@@ -254,7 +271,7 @@ button:hover {
 .buttons {
   display: flex;
   justify-content: center;
-  margin-top: 20px;
+  margin-top: 0px;
 }
 
 canvas {
