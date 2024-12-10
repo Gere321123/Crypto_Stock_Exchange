@@ -22,6 +22,8 @@ CONTRACT_ABI = [
 # Database connection
 DATABASE = "cryptostock.db"
 
+howManyTimesWeCallTheupdate_stock_prices = 0
+
 def get_bitcoin_value(btc_amount, previous_value, max_retries=5, backoff_factor=2):
     """
     Fetch the current Bitcoin price in USD and calculate the value for the given amount of Bitcoin.
@@ -49,6 +51,7 @@ def get_bitcoin_value(btc_amount, previous_value, max_retries=5, backoff_factor=
 
 # Function to update stock prices in the database
 def update_stock_prices():
+    howManyTimesWeCallTheupdate_stock_prices += 1
     try:
         # Connect to the database
         conn = sqlite3.connect(DATABASE)
@@ -94,17 +97,22 @@ def update_stock_prices():
 
                 price_history_24 = json.dumps(price_history_24_array)
 
-                if (token_value_in_usd < min_price_24 * 1.001):
+                while (token_value_in_usd < min_price_24 * 1.001):
                     min_price_24 *= 0.999
 
-                if (token_value_in_usd > max_price_24 * 0.999):
+                while (token_value_in_usd > max_price_24 * 0.999):
                     max_price_24 *= 1.001
                 # Update price and priceinUSD in the database
                 cursor.execute(
                     "UPDATE stock SET price = ?, priceinUSD = ?, price_history_24 = ?, index_price_24 = ?, max_price_24 = ?, min_price_24 = ?  WHERE id = ?",
                     (token_value_in_bitcoin, token_value_in_usd, price_history_24, index_price_24, max_price_24, min_price_24, stock_id),
                 )
-                #print(f"Updated stock ID {stock_id}: price = {token_value_in_bitcoin}, priceinUSD = {token_value_in_usd}")
+                # if (howManyTimesWeCallTheupdate_stock_prices % 5 == 0):
+
+                # if (howManyTimesWeCallTheupdate_stock_prices % 30):
+                # if (howManyTimesWeCallTheupdate_stock_prices % 90):
+                # if (howManyTimesWeCallTheupdate_stock_prices % 365):
+                # if (howManyTimesWeCallTheupdate_stock_prices % 1825):
 
             except Exception as e:
                 print(f"Error reading contract for stock ID {stock_id}: {e}")
