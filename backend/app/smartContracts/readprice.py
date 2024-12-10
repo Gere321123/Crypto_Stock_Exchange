@@ -108,16 +108,16 @@ def update_stock_prices():
                     "UPDATE stock SET price = ?, priceinUSD = ?, price_history_24 = ?, index_price_24 = ?, max_price_24 = ?, min_price_24 = ?  WHERE id = ?",
                     (token_value_in_bitcoin, token_value_in_usd, price_history_24, index_price_24, max_price_24, min_price_24, stock_id),
                 )
-                if howManyTimesWeCallTheupdate_stock_prices % 5 == 0:
-                    updateStockhistory("price_history_5d", "max_price_5d", "min_price_5d", "index_price_5d", stock_id, token_value_in_usd, max_price_24, min_price_24)
-                if howManyTimesWeCallTheupdate_stock_prices % 30 == 0:
-                    updateStockhistory("price_history_1m", "max_price_1m", "min_price_1m", "index_price_1m", stock_id, token_value_in_usd, max_price_24, min_price_24)
-                if howManyTimesWeCallTheupdate_stock_prices % 90 == 0:
-                    updateStockhistory("price_history_3m", "max_price_3m", "min_price_3m", "index_price_3m", stock_id, token_value_in_usd, max_price_24, min_price_24)
-                if howManyTimesWeCallTheupdate_stock_prices % 365 == 0:
-                    updateStockhistory("price_history_1y", "max_price_1y", "min_price_1y", "index_price_1y", stock_id, token_value_in_usd, max_price_24, min_price_24)
-                if howManyTimesWeCallTheupdate_stock_prices % 1825 == 0:
-                    updateStockhistory("price_history_5y", "max_price_5y", "min_price_5y", "index_price_5y", stock_id, token_value_in_usd, max_price_24, min_price_24)
+                # if howManyTimesWeCallTheupdate_stock_prices % 5 == 0:
+                #     updateStockhistory("price_history_5d", "max_price_5d", "min_price_5d", "index_price_5d", stock_id, token_value_in_usd, max_price_24, min_price_24)
+                # if howManyTimesWeCallTheupdate_stock_prices % 30 == 0:
+                #     updateStockhistory("price_history_1m", "max_price_1m", "min_price_1m", "index_price_1m", stock_id, token_value_in_usd, max_price_24, min_price_24)
+                # if howManyTimesWeCallTheupdate_stock_prices % 90 == 0:
+                #     updateStockhistory("price_history_3m", "max_price_3m", "min_price_3m", "index_price_3m", stock_id, token_value_in_usd, max_price_24, min_price_24)
+                # if howManyTimesWeCallTheupdate_stock_prices % 365 == 0:
+                #     updateStockhistory("price_history_1y", "max_price_1y", "min_price_1y", "index_price_1y", stock_id, token_value_in_usd, max_price_24, min_price_24)
+                # if howManyTimesWeCallTheupdate_stock_prices % 1825 == 0:
+                #     updateStockhistory("price_history_5y", "max_price_5y", "min_price_5y", "index_price_5y", stock_id, token_value_in_usd, max_price_24, min_price_24)
 
             except Exception as e:
                 print(f"Error reading contract for stock ID {stock_id}: {e}")
@@ -129,55 +129,55 @@ def update_stock_prices():
     except Exception as e:
         print(f"Error updating stock prices: {e}")
 
-def updateStockhistory(history, max_price, min_price, index, stock_id, price, max, min):
-    try:
-        # Connect to the database
-        conn = sqlite3.connect(DATABASE, check_same_thread=False)
-        cursor = conn.cursor()
+# def updateStockhistory(history, max_price, min_price, index, stock_id, price, max, min):
+#     try:
+#         # Connect to the database
+#         conn = sqlite3.connect(DATABASE, check_same_thread=False)
+#         cursor = conn.cursor()
 
-        # Get the current data for the specified stock_id
-        cursor.execute(f"""
-            SELECT {history}, {max_price}, {min_price}, {index} 
-            FROM stock 
-            WHERE id = ?
-        """, (stock_id,))
-        stock_data = cursor.fetchone()
+#         # Get the current data for the specified stock_id
+#         cursor.execute(f"""
+#             SELECT {history}, {max_price}, {min_price}, {index} 
+#             FROM stock 
+#             WHERE id = ?
+#         """, (stock_id,))
+#         stock_data = cursor.fetchone()
 
-        if stock_data:
-            # Extract the current price history, max, min, and index values
-            price_history = json.loads(stock_data[0])  # Assuming it's stored as a JSON string
-            max_price_history = stock_data[1]
-            min_price_history = stock_data[2]
-            index_price = stock_data[3]
+#         if stock_data:
+#             # Extract the current price history, max, min, and index values
+#             price_history = json.loads(stock_data[0])  # Assuming it's stored as a JSON string
+#             max_price_history = stock_data[1]
+#             min_price_history = stock_data[2]
+#             index_price = stock_data[3]
 
-            # Update the price history array based on the index and new price
-            if index_price < 1440:
-                price_history[index_price] = price
-                index_price += 1
-            else:
-                for i in range(1, len(price_history)):
-                    price_history[i - 1] = price_history[i]
-                price_history[-1] = price  
-            # Update the max and min prices
-            if max > max_price_history:
-                max_price_history = max
-            if min < min_price_history:
-                min_price_history = min
+#             # Update the price history array based on the index and new price
+#             if index_price < 1440:
+#                 price_history[index_price] = price
+#                 index_price += 1
+#             else:
+#                 for i in range(1, len(price_history)):
+#                     price_history[i - 1] = price_history[i]
+#                 price_history[-1] = price  
+#             # Update the max and min prices
+#             if max > max_price_history:
+#                 max_price_history = max
+#             if min < min_price_history:
+#                 min_price_history = min
 
-            # Increment the index for the next data point
+#             # Increment the index for the next data point
 
-            # Commit the updates back to the database
-            cursor.execute(f"""
-                UPDATE stock 
-                SET {history} = ?, {max_price} = ?, {min_price} = ?, {index} = ? 
-                WHERE id = ?
-            """, (json.dumps(price_history), max_price_history, min_price_history, index_price, stock_id))
-            conn.commit()
+#             # Commit the updates back to the database
+#             cursor.execute(f"""
+#                 UPDATE stock 
+#                 SET {history} = ?, {max_price} = ?, {min_price} = ?, {index} = ? 
+#                 WHERE id = ?
+#             """, (json.dumps(price_history), max_price_history, min_price_history, index_price, stock_id))
+#             conn.commit()
 
-    except Exception as e:
-        print(f"Error updating stock history for id {stock_id}: {e}")
-    finally:
-        conn.close()
+#     except Exception as e:
+#         print(f"Error updating stock history for id {stock_id}: {e}")
+#     finally:
+#         conn.close()
 
 def start_schedule():
     schedule.every(1).minutes.do(update_stock_prices)
