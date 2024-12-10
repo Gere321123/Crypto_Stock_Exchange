@@ -55,7 +55,7 @@ def update_stock_prices():
     howManyTimesWeCallTheupdate_stock_prices += 1
     try:
         # Connect to the database
-        conn = sqlite3.connect(DATABASE)
+        conn = sqlite3.connect(DATABASE, check_same_thread=False)
         cursor = conn.cursor()
 
         # Fetch all stocks from the database
@@ -132,7 +132,7 @@ def update_stock_prices():
 def updateStockhistory(history, max_price, min_price, index, stock_id, price, max, min):
     try:
         # Connect to the database
-        conn = sqlite3.connect(DATABASE)
+        conn = sqlite3.connect(DATABASE, check_same_thread=False)
         cursor = conn.cursor()
 
         # Get the current data for the specified stock_id
