@@ -31,7 +31,7 @@ export default {
     // Set interval to reload company details every minute (60000 ms)
     this.intervalId = setInterval(() => {
       this.loadCompanyDetails(companyId);
-    }, 6000);
+    }, 60000);
   },
   beforeDestroy() {
     // Clear the interval when the component is destroyed
