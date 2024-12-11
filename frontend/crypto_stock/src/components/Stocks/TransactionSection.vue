@@ -28,7 +28,6 @@
     </div>
     <button @click="toggleBuy">Buy Tokens</button>
     <button @click="toggleSell">Sell Tokens</button>
-    <button @click="getValue">Value</button>
     
     <!-- Buy Input -->
     <div v-if="showBuy">
@@ -47,7 +46,14 @@
     <!-- Connect Wallet Button -->
     <button v-if="showBuy || showSell" @click="openWalletPopup">Connect Wallet</button>
 
-    <Connect ref="connectComponent" />
+    <Connect 
+  ref="connectComponent"
+  :showBuy="showBuy"
+  :sendValue="showBuy ? ethAmount : tokensAmount"
+  :address="company[1]"
+  :network="company[34]"
+/>
+
   </div>
 </template>
 
@@ -104,11 +110,6 @@ export default defineComponent({
       connectComponent.value?.openModal();
     };
 
-    const getValue = async () => {
-      console.log("Fetching contract value...");
-      // Here, you can integrate the existing contract logic if needed
-    };
-
     return {
       showBuy,
       showSell,
@@ -122,7 +123,6 @@ export default defineComponent({
       calculateEth,
       openWalletPopup,
       connectComponent,
-      getValue,
     };
   },
 });

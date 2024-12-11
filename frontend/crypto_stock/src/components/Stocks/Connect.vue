@@ -1,8 +1,13 @@
 <script setup lang="ts">
 import { ref, defineExpose } from 'vue';
 import { useConnect, useChainId, useAccount, useDisconnect } from '@wagmi/vue';
-import SendTransaction from './SendTransaction.vue';
-import ReadContract from './ReadContract.vue';
+
+const props = defineProps<{
+  showBuy: boolean;
+  sendValue: number;
+  address: string;
+  network: string;
+}>();
 
 const chainId = useChainId();
 const { connectors, connect } = useConnect();
@@ -13,6 +18,7 @@ const showModal = ref(false);
 
 const openModal = () => {
   console.log("Opening wallet popup...");
+  console.log(props.sendValue);
   showModal.value = true;
 };
 
@@ -46,8 +52,6 @@ defineExpose({ openModal });
         <div>Address: {{ address }}</div>
         <div>Connected to {{ connector?.name }} Connector.</div>
         <button @click="disconnect()">Disconnect</button>
-        <ReadContract />
-        <SendTransaction />
       </div>
 
       <!-- Close Button -->
@@ -70,7 +74,7 @@ defineExpose({ openModal });
 }
 
 .modal-content {
-  background: white;
+  background: rgb(20, 20, 20);
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
