@@ -5,13 +5,12 @@
 
     <!-- Time period buttons -->
     <div class="buttons">
-      <button @click="changeTimePeriod('24h')">24h</button>
-      <button @click="changeTimePeriod('5d')">5d</button>
-      <button @click="changeTimePeriod('1m')">1m</button>
-      <button @click="changeTimePeriod('3m')">3m</button>
-      <button @click="changeTimePeriod('1y')">1y</button>
-      <button @click="changeTimePeriod('5y')">5y</button>
-      <button @click="changeTimePeriod('All')">All</button>
+      <button @click="changeTimePeriod(0)">24h</button>
+      <button @click="changeTimePeriod(1)">5d</button>
+      <button @click="changeTimePeriod(2)">1m</button>
+      <button @click="changeTimePeriod(3)">3m</button>
+      <button @click="changeTimePeriod(4)">1y</button>
+      <button @click="changeTimePeriod(5)">5y</button>
     </div>
 
     <!-- Canvas for displaying the stock price chart -->
@@ -35,23 +34,23 @@ export default defineComponent({
   setup(props) {
     const priceCanvas = ref<HTMLCanvasElement | null>(null);
     const stockData = ref<number[]>([]); // Placeholder for the stock data
-    const timePeriod = ref('24h'); // Default time period
     let refreshInterval: number | null = null; // To store the interval ID
     let canvasWidth = 0;
     let canvasHeight = 0;
+    let grafIndex = 0;
 
     // Fetch stock data from company[20] dynamically
     const fetchStockData = () => {
-      if (Array.isArray(props.company) && typeof props.company[20] === 'string') {
+      if (Array.isArray(props.company) && typeof props.company[20 + grafIndex] === 'string') {
         try {
-          const arrayData = JSON.parse(props.company[20]);
+          const arrayData = JSON.parse(props.company[20 + grafIndex]);
           stockData.value = Array.isArray(arrayData) ? arrayData : [];
           drawPriceChanges();
         } catch (error) {
           console.error('Invalid JSON string:', error);
         }
       } else {
-        console.error('props.company[20] is not available or invalid');
+        console.error('props.company[20 + grafIndex] is not available or invalid');
         stockData.value = []; // Default to an empty array
       }
     };
@@ -94,8 +93,8 @@ export default defineComponent({
           ctx.fillRect(0, 0, canvas.width, canvas.height);
 
           // Draw vertical lines for the left axis
-          const maxPrice = Number(props.company[37]); // Maximum price
-          const minPrice = Number(props.company[36]); // Minimum price
+          const maxPrice = Number(props.company[37 + (2* grafIndex)]); // Maximum price
+          const minPrice = Number(props.company[36 + (2* grafIndex)]); // Minimum price
           const numVerticalLines = 5; // Number of value markers
           const verticalGap = (canvasHeight - topMargin - bottomMargin) / numVerticalLines;
 
@@ -123,8 +122,16 @@ export default defineComponent({
           const numTimeMarkers = 6; // Number of time markers
           const timeGap =
             (canvas.width - leftMargin - rightMargin) / (numTimeMarkers - 1);
-          const timeLabels = ['', '4h', '8h', '12h', '16h', '24h']; // Example time labels
+          let timeLabels = ['', '', '', '', '', ''];
 
+          // this one can be bather but now its good :D
+
+          if (grafIndex == 0){
+            timeLabels = ['', '4h', '8h', '12h', '16h', '24h'];
+          }
+          if (grafIndex == 1){
+            timeLabels = ['', '1d', '2d', '3d', '4d', '5d'];
+          }
           for (let i = 0; i < numTimeMarkers; i++) {
             const x = leftMargin + i * timeGap;
 
@@ -187,8 +194,9 @@ export default defineComponent({
     };
 
     // Handle time period change (currently refetches stock data)
-    const changeTimePeriod = (newTimePeriod: string) => {
-      timePeriod.value = newTimePeriod;
+    const changeTimePeriod = (newTimePeriod: number) => {
+      grafIndex = newTimePeriod;
+      fetchStockData();
     };
 
     // Automatically refresh stock data every minute
