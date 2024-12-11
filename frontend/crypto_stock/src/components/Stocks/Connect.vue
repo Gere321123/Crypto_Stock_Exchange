@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, defineExpose } from 'vue';
+import { ref, defineExpose, watch } from 'vue';
 import { useConnect, useChainId, useAccount, useDisconnect } from '@wagmi/vue';
 
 const props = defineProps<{
   showBuy: boolean;
   sendValue: number;
-  address: string;
+  address: `0x${string}`;
   network: string;
 }>();
 
@@ -17,8 +17,6 @@ const { disconnect } = useDisconnect();
 const showModal = ref(false);
 
 const openModal = () => {
-  console.log("Opening wallet popup...");
-  console.log(props.sendValue);
   showModal.value = true;
 };
 
@@ -26,6 +24,30 @@ const closeModal = () => {
   showModal.value = false;
 };
 
+// ABI for interacting with the smart contract
+const contractAbi = [
+  {
+    type: 'function',
+    name: 'buyTokens',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'wBTCAmount', type: 'uint256' }],
+    outputs: [],
+  },
+  {
+    type: 'function',
+    name: 'sellTokens',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: '_tokenAmount', type: 'uint256' }],
+    outputs: [],
+  },
+];
+
+const sendTransaction = function() {
+  // Logic to send the transaction
+  console.log(
+    `${props.showBuy ? 'Buying' : 'Selling'} tokens for value: ${props.sendValue}`
+  );
+};
 // Expose openModal method to be called from parent component
 defineExpose({ openModal });
 </script>
@@ -34,7 +56,7 @@ defineExpose({ openModal });
   <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
     <div class="modal-content">
       <h2>Connect Wallet</h2>
-      
+
       <!-- Display Connect Options or Connected Info -->
       <div v-if="!address">
         <!-- Wallet Connect Buttons -->
@@ -48,9 +70,19 @@ defineExpose({ openModal });
       </div>
       
       <div v-else>
-        <!-- Display Connected Wallet Info -->
-        <div>Address: {{ address }}</div>
-        <div>Connected to {{ connector?.name }} Connector.</div>
+        <!-- Address and Value -->
+        <p>Address: {{ address }}</p>
+        <p>Value: {{ sendValue }}</p>
+
+        <!-- Conditional Button Text -->
+        <p>{{ showBuy ? 'Buy Tokens' : 'Sell Tokens' }}</p>
+
+        <!-- Send Transaction Button -->
+        <button @click="sendTransaction()">
+          Send Transaction
+        </button>
+
+        <!-- Disconnect Button -->
         <button @click="disconnect()">Disconnect</button>
       </div>
 
