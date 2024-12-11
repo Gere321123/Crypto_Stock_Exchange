@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import { ref, defineExpose, watch } from 'vue';
-import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract } from '@wagmi/vue';
-const { writeContract } = useWriteContract()
+import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract, useWaitForTransactionReceipt } from '@wagmi/vue';
+const { 
+  data: hash,
+  error,
+  isPending,
+  writeContract 
+} = useWriteContract()
 const props = defineProps<{
   showBuy: boolean;
   sendValue: number;
@@ -44,21 +49,28 @@ const contractAbi = [
 
 const send = function() {
   if (props.showBuy){
-  writeContract({ 
+  writeContract({
     address: props.address, 
     abi: contractAbi, 
     functionName: 'buyTokens',
-    args: [props.sendValue],
+    args: [props.sendValue * 10 ** 18],
+    chainId: 31337 as any,
   })
   }else{
-    writeContract({ 
+    writeContract({
     address: props.address, 
     abi: contractAbi, 
     functionName: 'sellTokens',
-    args: [props.sendValue],
+    args: [props.sendValue * 10 ** 18],
+    chainId: 31337 as any,
   })
   }
 };
+
+const { isLoading: isConfirming, isSuccess: isConfirmed } =
+  useWaitForTransactionReceipt({
+    hash,
+  })
 // Expose openModal method to be called from parent component
 defineExpose({ openModal });
 </script>
@@ -88,10 +100,16 @@ defineExpose({ openModal });
         <!-- Conditional Button Text -->
         <p>{{ showBuy ? 'Buy Tokens' : 'Sell Tokens' }}</p>
 
-        <!-- Send Transaction Button -->
-        <button @click="send()">
-          Send Transaction
-        </button>
+          <button :disabled="isPending" @click="send()">
+      <span v-if="isPending">Sending...</span>
+      <span v-else>Send</span>
+    </button>
+    <div v-if="hash">Transaction Hash: {{ hash }}</div>
+    <div v-if="isConfirming">Waiting for confirmation...</div>
+    <div v-if="isConfirmed">Transaction Confirmed!</div>
+    <div v-if="error">
+      Error: {{ error.message }}
+    </div>
 
         <!-- Disconnect Button -->
         <button @click="disconnect()">Disconnect</button>

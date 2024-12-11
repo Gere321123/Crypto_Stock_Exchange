@@ -1,6 +1,6 @@
 import { createConfig, http } from '@wagmi/vue';
 import { injected, metaMask, walletConnect } from '@wagmi/vue/connectors';
-import { Chain } from '@wagmi/core';
+import { type Chain } from 'viem'
 
 const projectId = 'I did not create it yet';
 
@@ -8,7 +8,6 @@ const projectId = 'I did not create it yet';
 const localhost: Chain = {
   id: 31337, // Standard ID for local development chain
   name: 'Localhost',
-  network: 'localhost',
   nativeCurrency: {
     name: 'Ether',
     symbol: 'ETH',

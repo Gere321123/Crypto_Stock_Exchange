@@ -13,6 +13,10 @@ contract DeployMockWBTC is Script {
 
         console.log("MockWBTC deployed at:", address(mockWBTC));
 
+        console.log("Deployer balance after minting:", mockWBTC.balanceOf(msg.sender));
+
+        console.log("Deployer balance after to the contract:", mockWBTC.balanceOf(address(this)));
+
         vm.stopBroadcast(); // Stop broadcasting transactions
     }
 }
