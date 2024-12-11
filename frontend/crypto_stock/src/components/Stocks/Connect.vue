@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, defineExpose, watch } from 'vue';
-import { useConnect, useChainId, useAccount, useDisconnect } from '@wagmi/vue';
-
+import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract } from '@wagmi/vue';
+const { writeContract } = useWriteContract()
 const props = defineProps<{
   showBuy: boolean;
   sendValue: number;
@@ -42,11 +42,22 @@ const contractAbi = [
   },
 ];
 
-const sendTransaction = function() {
-  // Logic to send the transaction
-  console.log(
-    `${props.showBuy ? 'Buying' : 'Selling'} tokens for value: ${props.sendValue}`
-  );
+const send = function() {
+  if (props.showBuy){
+  writeContract({ 
+    address: props.address, 
+    abi: contractAbi, 
+    functionName: 'buyTokens',
+    args: [props.sendValue],
+  })
+  }else{
+    writeContract({ 
+    address: props.address, 
+    abi: contractAbi, 
+    functionName: 'sellTokens',
+    args: [props.sendValue],
+  })
+  }
 };
 // Expose openModal method to be called from parent component
 defineExpose({ openModal });
@@ -78,7 +89,7 @@ defineExpose({ openModal });
         <p>{{ showBuy ? 'Buy Tokens' : 'Sell Tokens' }}</p>
 
         <!-- Send Transaction Button -->
-        <button @click="sendTransaction()">
+        <button @click="send()">
           Send Transaction
         </button>
 
