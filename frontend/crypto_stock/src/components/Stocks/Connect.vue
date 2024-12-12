@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, defineExpose, watch } from 'vue';
 import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract, useWaitForTransactionReceipt } from '@wagmi/vue';
+import { keccak256, toUtf8Bytes, Contract } from "ethers";
 const { 
   data: hash,
   error,
@@ -46,9 +47,66 @@ const contractAbi = [
     outputs: [],
   },
 ];
+// Define the wBTC contract ABI and address
+const wBTCAbi = [
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "spender",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "approve",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  // Include other necessary ABI entries for wBTC contract interactions
+];
 
+// Replace this with your actual contract address
+const wBTCAddress = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"; // Example address, replace with the actual address
+
+// Get the provider from wagmi
+// const provider = useProvider();
+
+// Create the wBTC contract instance
+// const wBTC = new Contract(wBTCAddress, wBTCAbi, provider);
 const send = function() {
+  const errorSignatures = [
+  "Coin__MustBeMoreThanZero()",
+  "Coin__NotEnoughTokensAvailable()",
+  "Coin__InsufficientTokens()",
+  "Coin__NotAuthorized()",
+  "Coin__CompanyWantsToWithdrawMoreMoneyThanAllowed()",
+  "Coin__BurnMoreThanTheTokensInTheMarcatCap()",
+  "Coin__InsufficientWBTC()",
+  "Coin__WBTCTransferFailed()",
+  "Coin__FailedToSendWBTC()",
+  "Coin__InsufficientWBTCInContract()",
+  "Coin__FailedToReceiveWBTC()",
+];
+
+// Compute and log each error's Keccak256 hash
+errorSignatures.forEach((signature) => {
+  const hash = keccak256(toUtf8Bytes(signature));
+  console.log(`${signature}: ${hash}`);
+});
   if (props.showBuy){
+    // const approveTx = await wBTC.approve(contractAddress, approvalAmount);
+    // await approveTx.wait();
   writeContract({
     address: props.address, 
     abi: contractAbi, 
