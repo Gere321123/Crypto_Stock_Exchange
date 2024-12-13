@@ -113,6 +113,12 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
         if (tokensToBuy > balanceOf(address(this))) {
             revert Coin__NotEnoughTokensAvailable();
         }
+
+        uint256 allowance = wBTC.allowance(msg.sender, address(this));
+        if (allowance < wBTCAmount) {
+            revert ERC20InsufficientAllowance(msg.sender, allowance, wBTCAmount);
+        }
+
         // Transfer wBTC from buyer to the contract
         bool success = wBTC.transferFrom(msg.sender, address(this), wBTCAmount);
         if (!success) {
