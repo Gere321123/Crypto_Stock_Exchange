@@ -19,6 +19,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     error Coin__FailedToSendWBTC();
     error Coin__InsufficientWBTCInContract();
     error Coin__FailedToReceiveWBTC();
+    error Coin__ERC20InsufficientAllowance();
 
     event TokensBought(address indexed buyer, uint256 wBTCAmount, uint256 tokenAmount);
     event TokensSold(address indexed seller, uint256 tokenAmount, uint256 wBTCAmount);
@@ -116,7 +117,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
 
         uint256 allowance = wBTC.allowance(msg.sender, address(this));
         if (allowance < wBTCAmount) {
-            revert ERC20InsufficientAllowance(msg.sender, allowance, wBTCAmount);
+            revert Coin__ERC20InsufficientAllowance();
         }
 
         // Transfer wBTC from buyer to the contract
