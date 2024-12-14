@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import { ref, defineExpose } from 'vue';
-import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract, useWaitForTransactionReceipt } from '@wagmi/vue';
-import { parseEther } from 'viem';
+import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract } from '@wagmi/vue';
 
 const { 
-  data: txData,
   error,
-  isPending,
   writeContract 
 } = useWriteContract();
 
@@ -76,7 +73,7 @@ const approve = async () => {
         address: wBTCAddress, 
         abi: wBTCAbi, 
         functionName: 'approve',
-        args: [address.value, props.sendValue * 10 ** 18],
+        args: [props.address, props.sendValue * 10 ** 18],
       });
     } else {
       //need here a writecontract
