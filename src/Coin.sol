@@ -24,7 +24,7 @@ contract Coin is ERC20, Ownable, ReentrancyGuard {
     event TokensSold(address indexed seller, uint256 tokenAmount, uint256 wBTCAmount);
     event Withdrawal(address indexed account, uint256 amount);
 
-    IERC20 public constant wBTC = IERC20(0x5FC8d32690cc91D4c39d9d3abcBD16989F875707); //This wrapper Bitcoin address is for Etherium network : 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599
+    IERC20 public constant wBTC = IERC20(0x5FbDB2315678afecb367f032d93F642f64180aa3); //This wrapper Bitcoin address is for Etherium network : 0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599
 
     address private immutable i_owner;
     uint8 private immutable i_OWNERWITHDRAWALPERCENTAGE;

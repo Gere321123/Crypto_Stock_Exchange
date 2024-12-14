@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, defineExpose } from 'vue';
-import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract, useWaitForTransactionReceipt, useSimulateContract } from '@wagmi/vue';
+import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract, useWaitForTransactionReceipt } from '@wagmi/vue';
 import { parseEther } from 'viem';
 
 const { 
@@ -9,6 +9,7 @@ const {
   isPending,
   writeContract 
 } = useWriteContract();
+
 
 const props = defineProps<{
   showBuy: boolean;
@@ -64,34 +65,38 @@ const wBTCAbi = [
 ];
 
 // Replace this with your actual wBTC contract address
-const wBTCAddress = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"; // Example address, replace with the actual address
+const wBTCAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Example address, replace with the actual address
 
-const send = function() {
-  if (props.showBuy){
-    
-    writeContract({ 
-    address: wBTCAddress, 
-    abi: wBTCAbi, 
-    functionName: 'approve',
-    args: [props.sendValue * 10 ** 18],
-  })
+const send = async () => {
+  try {
+    if (props.showBuy) {
+      // Approve the transaction
+      const approveTx = writeContract({ 
+        address: wBTCAddress, 
+        abi: wBTCAbi, 
+        functionName: 'approve',
+        args: [address.value, props.sendValue * 10 ** 18],
+      });
+      console.log(approveTx);
 
-  writeContract({ 
-    address: props.address, 
-    abi: contractAbi, 
-    functionName: 'buyTokens',
-    args: [props.sendValue],
-  })
-  }else{
     writeContract({ 
-    address: props.address, 
-    abi: contractAbi, 
-    functionName: 'sellTokens',
-    args: [props.sendValue * 10 ** 18],
-  })
+          address: props.address, 
+          abi: contractAbi, 
+          functionName: 'buyTokens',
+          args: [props.sendValue * 10 ** 18],
+        });
+    } else {
+      writeContract({ 
+        address: props.address, 
+        abi: contractAbi, 
+        functionName: 'sellTokens',
+        args: [props.sendValue * 10 ** 18],
+      });
+
+    }
+  } catch (error) {
+    console.error('Transaction error:', error);
   }
-
-  console.log(error);
 };
 
 // Expose openModal method to be called from parent component
