@@ -67,18 +67,28 @@ const wBTCAbi = [
 // Replace this with your actual wBTC contract address
 const wBTCAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Example address, replace with the actual address
 
-const send = async () => {
+      // Approve the transaction
+
+const approve = async () => {
   try {
     if (props.showBuy) {
-      // Approve the transaction
-      const approveTx = writeContract({ 
+      writeContract({ 
         address: wBTCAddress, 
         abi: wBTCAbi, 
         functionName: 'approve',
         args: [address.value, props.sendValue * 10 ** 18],
       });
-      console.log(approveTx);
+    } else {
+      //need here a writecontract
+      }
+  } catch (error) {
+    console.error('Transaction error:', error);
+  }
+      }
 
+const send = async () => {
+  try {
+    if (props.showBuy) {
     writeContract({ 
           address: props.address, 
           abi: contractAbi, 
@@ -127,11 +137,16 @@ defineExpose({ openModal });
 
         <!-- Conditional Button Text -->
         <p>{{ showBuy ? 'Buy Tokens' : 'Sell Tokens' }}</p>
-
-          <button :disabled="isPending" @click="send()">
+        
+      <button :disabled="isPending" @click="approve()">
+      <span v-if="isPending">Approve...</span>
+      <span v-else>Approve</span>
+    </button>
+      <button :disabled="isPending" @click="send()">
       <span v-if="isPending">Sending...</span>
       <span v-else>Send</span>
     </button>
+
     <div v-if="error">
       Error: {{ error.message }}
     </div>
