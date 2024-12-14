@@ -142,11 +142,9 @@ defineExpose({ openModal });
       Send
     </button>
 
-    <div v-if="error">
-      Error: {{ error.message }}
-    </div>
 
-        <!-- Disconnect Button -->
+
+        <!--&& error.message.substring(73, 85) === '0x2e9d4e44' Disconnect Button -->
         <button @click="disconnect()">Disconnect</button>
       </div>
 
