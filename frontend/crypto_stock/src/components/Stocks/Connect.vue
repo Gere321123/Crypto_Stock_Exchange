@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { ref, defineExpose } from 'vue';
-import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract, useWaitForTransactionReceipt } from '@wagmi/vue';
+import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract, useWaitForTransactionReceipt, useSimulateContract } from '@wagmi/vue';
+import { parseEther } from 'viem';
+
 const { 
-  data: hash,
+  data: txData,
   error,
   isPending,
   writeContract 
-} = useWriteContract()
+} = useWriteContract();
+
 const props = defineProps<{
   showBuy: boolean;
   sendValue: number;
@@ -63,51 +66,34 @@ const wBTCAbi = [
 // Replace this with your actual wBTC contract address
 const wBTCAddress = "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"; // Example address, replace with the actual address
 
-// Get the provider from wagmi
-// const provider = useProvider();
-
-// Create the wBTC contract instance
-// const wBTC = new Contract(wBTCAddress, wBTCAbi, provider);
-const send = async function() {
-
-const approvalAmount = props.sendValue * 10 ** 18; // Convert value to wei
-    const contractAddress = address;
-
-    // Approve the tokens for the contract
-     writeContract({
-      address: wBTCAddress,
-      abi: wBTCAbi,
-      functionName: "approve",
-      args: [contractAddress, approvalAmount],
-      chainId: 31337 as any,
-    });
-
-
+const send = function() {
   if (props.showBuy){
-    // const approveTx = await wBTC.approve(contractAddress, approvalAmount);
-    // await approveTx.wait();
-  writeContract({
+    
+    writeContract({ 
+    address: wBTCAddress, 
+    abi: wBTCAbi, 
+    functionName: 'approve',
+    args: [props.sendValue * 10 ** 18],
+  })
+
+  writeContract({ 
     address: props.address, 
     abi: contractAbi, 
     functionName: 'buyTokens',
-    args: [props.sendValue * 10 ** 18],
-    chainId: 31337 as any,
+    args: [props.sendValue],
   })
   }else{
-    writeContract({
+    writeContract({ 
     address: props.address, 
     abi: contractAbi, 
     functionName: 'sellTokens',
     args: [props.sendValue * 10 ** 18],
-    chainId: 31337 as any,
   })
   }
+
+  console.log(error);
 };
 
-const { isLoading: isConfirming, isSuccess: isConfirmed } =
-  useWaitForTransactionReceipt({
-    hash,
-  })
 // Expose openModal method to be called from parent component
 defineExpose({ openModal });
 </script>
@@ -141,9 +127,6 @@ defineExpose({ openModal });
       <span v-if="isPending">Sending...</span>
       <span v-else>Send</span>
     </button>
-    <div v-if="hash">Transaction Hash: {{ hash }}</div>
-    <div v-if="isConfirming">Waiting for confirmation...</div>
-    <div v-if="isConfirmed">Transaction Confirmed!</div>
     <div v-if="error">
       Error: {{ error.message }}
     </div>
