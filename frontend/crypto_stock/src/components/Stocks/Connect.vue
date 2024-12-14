@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, defineExpose } from 'vue';
 import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract, useWaitForTransactionReceipt } from '@wagmi/vue';
+import { parseEther } from 'viem';
+
 const { 
-  data: hash,
+  data: txData,
   error,
   isPending,
   writeContract 
@@ -64,25 +66,35 @@ const wBTCAbi = [
 
 // Replace this with your actual wBTC contract address
 const wBTCAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Example address, replace with the actual address
-const buytokens = async () => {
-  writeContract({ 
+
+// Approve the transaction
+
+const approve = async () => {
+  try {
+    if (props.showBuy) {
+      writeContract({ 
+        address: wBTCAddress, 
+        abi: wBTCAbi, 
+        functionName: 'approve',
+        args: [address.value, props.sendValue * 10 ** 18],
+      });
+    } else {
+      //need here a writecontract
+      }
+  } catch (error) {
+    console.error('Transaction error:', error);
+  }
+      }
+
+const send = async () => {
+  try {
+    if (props.showBuy) {
+    writeContract({ 
           address: props.address, 
           abi: contractAbi, 
           functionName: 'buyTokens',
           args: [props.sendValue * 10 ** 18],
         });
-        console.log("Yhe");
-}
-const send = async () => {
-  try {
-    if (props.showBuy) {
-       writeContract({
-        address: wBTCAddress, // WBTC token contract
-        abi: wBTCAbi,         // ABI of the WBTC token contract
-        functionName: 'approve',
-        args: [props.address, props.sendValue * 10 ** 18], // Approve your contract
-      });
-   
     } else {
       writeContract({ 
         address: props.address, 
@@ -96,14 +108,7 @@ const send = async () => {
     console.error('Transaction error:', error);
   }
 };
-const { isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-  hash,
-});
 
-// Use `isConfirmed` to handle the transaction status
-if (isConfirmed) {
-  buytokens();
-}
 // Expose openModal method to be called from parent component
 defineExpose({ openModal });
 </script>
@@ -132,10 +137,14 @@ defineExpose({ openModal });
 
         <!-- Conditional Button Text -->
         <p>{{ showBuy ? 'Buy Tokens' : 'Sell Tokens' }}</p>
-      <button :disabled="isPending" @click="send()">
-      <span v-if="isPending">Sending...</span>
-      <span v-else>Send</span>
+        
+      <button :disabled="isPending" @click="approve()">
+      Approve
     </button>
+      <button :disabled="isPending" @click="send()">
+      Send
+    </button>
+
     <div v-if="error">
       Error: {{ error.message }}
     </div>
