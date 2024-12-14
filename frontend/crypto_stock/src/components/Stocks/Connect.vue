@@ -138,10 +138,10 @@ defineExpose({ openModal });
         <!-- Conditional Button Text -->
         <p>{{ showBuy ? 'Buy Tokens' : 'Sell Tokens' }}</p>
         
-      <button :disabled="isPending" @click="approve()">
+      <button v-if="props.showBuy" @click="approve()">
       Approve
     </button>
-      <button :disabled="isPending" @click="send()">
+      <button  @click="send()">
       Send
     </button>
 
