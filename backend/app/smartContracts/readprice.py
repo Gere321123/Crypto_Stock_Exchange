@@ -24,30 +24,19 @@ DATABASE = "cryptostock.db"
 
 howManyTimesWeCallTheupdate_stock_prices = 0
 
-def get_bitcoin_value(btc_amount, previous_value, max_retries=5, backoff_factor=2):
+def get_bitcoin_value():
     """
     Fetch the current Bitcoin price in USD and calculate the value for the given amount of Bitcoin.
     Includes error handling and retry logic with exponential backoff.
     """
     url = 'https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd'
-    retries = 0
 
-    while retries < max_retries:
-        try:
-            response = requests.get(url, timeout=10)  # Added timeout to avoid hanging requests
-            response.raise_for_status()  # Raise an error for HTTP status codes 4xx/5xx
-            data = response.json()
-            btc_price = data['bitcoin']['usd']
-            usd_value = btc_amount * btc_price
-            return usd_value
-        except requests.RequestException as e:
-            print(f"Error fetching Bitcoin price: {e}. Retrying in {backoff_factor ** retries} seconds...")
-            retries += 1
-            time.sleep(backoff_factor ** retries)
-
-    # If all retries fail, return a fallback value or raise an exception
-    print("Failed to fetch Bitcoin price after multiple retries.")
-    return previous_value
+    response = requests.get(url, timeout=10)  # Added timeout to avoid hanging requests
+    response.raise_for_status()  # Raise an error for HTTP status codes 4xx/5xx
+    data = response.json()
+    btc_price = data['bitcoin']['usd']
+            
+    return btc_price
 
 # Function to update stock prices in the database
 def update_stock_prices():
@@ -61,6 +50,8 @@ def update_stock_prices():
         # Fetch all stocks from the database
         cursor.execute("SELECT id, url, network, price_history_24, index_price_24, max_price_24, min_price_24 FROM stock")
         stocks = cursor.fetchall()
+
+        bitValue = get_bitcoin_value()
 
         for stock in stocks:
             stock_id, contract_address, network, price_history_24, index_price_24, max_price_24, min_price_24  = stock
@@ -82,7 +73,8 @@ def update_stock_prices():
                 # Convert Wei to Bitcoin (1 Bitcoin = 10**18 Wei)
                 token_value_in_bitcoin = token_value_in_wei / (10 **18)
                 # Calculate the token value in USD
-                token_value_in_usd = get_bitcoin_value(token_value_in_bitcoin,price_history_24_array[index_price_24 - 1])
+                
+                token_value_in_usd = token_value_in_bitcoin * bitValue
 
                 price_history_24_array[index_price_24] = token_value_in_usd
 
