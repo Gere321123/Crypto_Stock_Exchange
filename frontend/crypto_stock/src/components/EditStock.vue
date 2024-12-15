@@ -2,7 +2,7 @@
   <div>
     <h2>Tranzakcions</h2>
     <input v-model.number="tokensAmount" type="number" placeholder="Enter tokens amount" /> WBit
-    <button @click="uplodemoney">Uplode Money</button>
+    <button @click="uplodemoneyfunction">Uplode Money</button>
     <button @click="widrowMoney">Widrow Money</button>
     <WithdrawUplode 
       ref="connectComponent"
@@ -134,7 +134,7 @@ export default {
         alert("Failed to load stock data.");
     }
 },
-uplodemoney() {
+uplodemoneyfunction() {
       if (this.tokensAmount > 0) {
         this.uplodemoney = true; // Indicate an "upload" operation
         this.$refs.connectComponent?.openModal(); // Open the modal
