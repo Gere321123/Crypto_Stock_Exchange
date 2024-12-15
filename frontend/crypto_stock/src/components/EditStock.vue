@@ -1,5 +1,16 @@
 <template>
   <div>
+    <h2>Tranzakcions</h2>
+    <input v-model.number="tokensAmount" type="number" placeholder="Enter tokens amount" /> WBit
+    <button @click="uplodemoney">Uplode Money</button>
+    <button @click="widrowMoney">Widrow Money</button>
+    <WithdrawUplode 
+      ref="connectComponent"
+      :uplodemoney="uplodemoney"
+      :sendValue="tokensAmount"
+      :address="stock[1]"
+      :network="stock[34]"
+    />
     <h2>Edit Stock</h2>
     <form @submit.prevent="saveChanges">
       <div v-if="!loginasCompany">      
@@ -78,7 +89,7 @@
 
 <script>
 import axios from "axios";
-
+import WithdrawUplode from "./Stocks/WithdrawUplode.vue";
 export default {
   data() {
     return {
@@ -87,8 +98,11 @@ export default {
       annualdemand: [],
       id: '',
       loginasCompany: true,
+      tokensAmount: 0,
+      uplodemoney: true,
     };
   },
+  components: { WithdrawUplode },
   props: {
     stockId: {
         type: String,
@@ -120,6 +134,22 @@ export default {
         alert("Failed to load stock data.");
     }
 },
+uplodemoney() {
+      if (this.tokensAmount > 0) {
+        this.uplodemoney = true; // Indicate an "upload" operation
+        this.$refs.connectComponent?.openModal(); // Open the modal
+      } else {
+        console.error("Please enter a valid tokens amount!");
+      }
+    },
+    widrowMoney() {
+      if (this.tokensAmount > 0) {
+        this.uplodemoney = false; // Indicate a "withdraw" operation
+        this.$refs.connectComponent?.openModal(); // Open the modal
+      } else {
+        console.error("Please enter a valid tokens amount!");
+      }
+    },
 
     async saveChanges() {
       this.stock[7] = "["+this.otherPictures.toString()+"]";
