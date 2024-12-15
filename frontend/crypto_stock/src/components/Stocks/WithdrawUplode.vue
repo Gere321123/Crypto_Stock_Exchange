@@ -10,6 +10,7 @@ const {
 
 const props = defineProps<{
   uplodemoney: boolean;
+  loginasCompany: boolean;
   sendValue: number;
   address: `0x${string}`;
   network: string;
@@ -32,19 +33,32 @@ const closeModal = () => {
 
 // ABI for interacting with the smart contract
 const contractAbi = [
-  {
+{
     type: 'function',
-    name: 'buyTokens',
+    name: 'withdrawCompany',
     stateMutability: 'nonpayable',
-    inputs: [{ name: 'wBTCAmount', type: 'uint256' }],
-    outputs: [],
+    inputs: [
+      { name: 'withdrawValueinWei', type: 'uint256' }
+    ],
+    outputs: []
   },
   {
     type: 'function',
-    name: 'sellTokens',
+    name: 'uplodeMoney',
     stateMutability: 'nonpayable',
-    inputs: [{ name: '_tokenAmount', type: 'uint256' }],
-    outputs: [],
+    inputs: [
+      { name: 'wBTCAmount', type: 'uint256' }
+    ],
+    outputs: []
+  },
+  {
+    type: 'function',
+    name: 'withdowOwners',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'withdrawValueinWei', type: 'uint256' }
+    ],
+    outputs: []
   },
 ];
 // wBTC Contract ABI
@@ -75,9 +89,7 @@ const approve = async () => {
         functionName: 'approve',
         args: [props.address, props.sendValue * 10 ** 18],
       });
-    } else {
-      //need here a writecontract
-      }
+    } 
   } catch (error) {
     console.error('Transaction error:', error);
   }
@@ -85,22 +97,31 @@ const approve = async () => {
 
 const send = async () => {
   try {
+    if (props.loginasCompany){
     if (props.uplodemoney) {
     writeContract({ 
           address: props.address, 
           abi: contractAbi, 
-          functionName: 'buyTokens',
+          functionName: 'uplodeMoney',
           args: [props.sendValue * 10 ** 18],
         });
     } else {
       writeContract({ 
         address: props.address, 
         abi: contractAbi, 
-        functionName: 'sellTokens',
+        functionName: 'withdrawCompany',
         args: [props.sendValue * 10 ** 18],
       });
 
     }
+  }else{
+    writeContract({ 
+        address: props.address, 
+        abi: contractAbi, 
+        functionName: 'withdowOwners',
+        args: [props.sendValue * 10 ** 18],
+      });
+  }
   } catch (error) {
     console.error('Transaction error:', error);
   }
@@ -135,7 +156,7 @@ defineExpose({ openModal });
         <!-- Conditional Button Text -->
         <p>{{ uplodemoney ? 'Buy Tokens' : 'Sell Tokens' }}</p>
         
-      <button v-if="props.uplodemoney" @click="approve()">
+      <button v-if="props.uplodemoney && props.loginasCompany" @click="approve()">
       Approve
     </button>
       <button  @click="send()">

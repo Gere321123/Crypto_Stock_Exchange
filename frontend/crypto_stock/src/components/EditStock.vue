@@ -2,11 +2,12 @@
   <div>
     <h2>Tranzakcions</h2>
     <input v-model.number="tokensAmount" type="number" placeholder="Enter tokens amount" /> WBit
-    <button @click="uplodemoneyfunction">Uplode Money</button>
+    <button v-if="loginasCompany" @click="uplodemoneyfunction">Uplode Money</button>
     <button @click="widrowMoney">Widrow Money</button>
     <WithdrawUplode 
       ref="connectComponent"
       :uplodemoney="uplodemoney"
+      :loginasCompany = "loginasCompany"
       :sendValue="tokensAmount"
       :address="stock[1]"
       :network="stock[34]"
