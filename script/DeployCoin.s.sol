@@ -7,8 +7,8 @@ import "../src/Coin.sol";
 contract DeployCoin is Script {
     function run() external returns (Coin) {
         // Addresses provided
-        address company = 0x565FaF97aDcdb3E70e8d00691485E16A1cf4ba25;
-        address secondOwner = 0x332dEF3C2818F757AdD213f91E716027af07100E;
+        address company = 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266;
+        address secondOwner = 0x565FaF97aDcdb3E70e8d00691485E16A1cf4ba25;
 
         // Parameters for deployment
         uint256 numberOfTokens = 10000000; // Example token supply, adjust as needed

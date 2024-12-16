@@ -33,12 +33,5 @@ To create a dynamic and fair market, we utilize a **price adjustment formula ins
 
 ## For me 
 
- `export $(grep -v '^#' .env | xargs)`
+MockWBTC deployed at: 0x3632cdbaC976e471a874F4C384618d749E6Fba85
 
-`forge script script/DeployMockWBTC.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast -vvvv`
-
-change the addressin the Coin.sol
-
-`forge build`
-
-`forge script script/DeployCoin.s.sol --rpc-url $RPC_URL --private-key $PRIVATE_KEY --broadcast -vvvv`
