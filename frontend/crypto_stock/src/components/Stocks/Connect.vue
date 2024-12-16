@@ -32,6 +32,7 @@ const closeModal = () => {
 
 // ABI for interacting with the smart contract
 const contractAbi = [
+  // Function definitions
   {
     type: 'function',
     name: 'buyTokens',
@@ -46,7 +47,70 @@ const contractAbi = [
     inputs: [{ name: '_tokenAmount', type: 'uint256' }],
     outputs: [],
   },
+
+  // Custom error definitions
+  {
+    type: 'error',
+    name: 'Coin__MustBeMoreThanZero',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__NotEnoughTokensAvailable',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__InsufficientTokens',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__NotAuthorized',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__CompanyWantsToWithdrawMoreMoneyThanAllowed',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__BurnMoreThanTheTokensInTheMarcatCap',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__InsufficientWBTC',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__WBTCTransferFailed',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__FailedToSendWBTC',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__InsufficientWBTCInContract',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__FailedToReceiveWBTC',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__ERC20InsufficientAllowance',
+    inputs: [],
+  },
 ];
+
 // wBTC Contract ABI
 const wBTCAbi = [
   {
@@ -92,6 +156,7 @@ const send = async () => {
           functionName: 'buyTokens',
           args: [props.sendValue * 10 ** 18],
         });
+        console.log("Send " );
     } else {
       writeContract({ 
         address: props.address, 
