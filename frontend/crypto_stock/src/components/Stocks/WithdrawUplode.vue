@@ -60,6 +60,66 @@ const contractAbi = [
     ],
     outputs: []
   },
+  {
+    type: 'error',
+    name: 'Coin__MustBeMoreThanZero',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__NotEnoughTokensAvailable',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__InsufficientTokens',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__NotAuthorized',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__CompanyWantsToWithdrawMoreMoneyThanAllowed',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__BurnMoreThanTheTokensInTheMarcatCap',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__InsufficientWBTC',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__WBTCTransferFailed',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__FailedToSendWBTC',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__InsufficientWBTCInContract',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__FailedToReceiveWBTC',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__ERC20InsufficientAllowance',
+    inputs: [],
+  },
 ];
 // wBTC Contract ABI
 const wBTCAbi = [
@@ -163,7 +223,7 @@ defineExpose({ openModal });
       Send
     </button>
   <div v-if="error">
-    Fucked
+    {{error.message}}
   </div>    
         <!--&& error.message.substring(73, 85) === '0x2e9d4e44' Disconnect Button -->
         <button @click="disconnect()">Disconnect</button>
