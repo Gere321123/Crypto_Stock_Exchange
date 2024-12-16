@@ -76,7 +76,7 @@ const wBTCAbi = [
 ];
 
 // Replace this with your actual wBTC contract address
-const wBTCAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Example address, replace with the actual address
+const wBTCAddress = "0x3632cdbaC976e471a874F4C384618d749E6Fba85"; // Example address, replace with the actual address
 
 // Approve the transaction
 
