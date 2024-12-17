@@ -3,16 +3,12 @@
     <div class="home-content">
       <h1>Welcome to Crypto Stock</h1>
       <p>
-        This platform allows companies to raise capital using Ethereum. Unlike traditional stocks, 
-        where shares are bought with dollars, here companies can issue tokens backed by Ethereum. 
-        These tokens represent a stake in the company, helping businesses grow and innovate 
-        with the support of crypto investors.
+        This platform allows companies to raise capital by issuing shares in Wrapped Bitcoin, instead of using traditional fiat currencies. In contrast to the usual stock market where shares are purchased with dollars, here companies can create tokens backed by Wrapped Bitcoin. These tokens serve as a digital asset that represents ownership in the company, providing businesses with an innovative way to raise funds. By leveraging the power of blockchain technology, companies can tap into a global network of crypto investors, enabling growth and fostering innovation without the barriers of conventional finance.
       </p>
       <p>
         Join us in building a new era of decentralized funding, where growth and innovation 
         know no borders.
       </p>
-      <button class="explore-button">Explore Companies</button>
     </div>
   </section>
 </template>
@@ -31,8 +27,7 @@ export default {
   color: #ffffff;
   padding: 20px;
   text-align: center;
-
-  margin-top: 130px;
+  margin-top: 5%;
 }
 
 .home-content {
