@@ -11,24 +11,34 @@
       and unlock new opportunities for expansion, without the limitations of conventional fundraising methods.
     </p>
     <button class="get-started-button" @click="handleGetStarted">Get WBTC</button>
+    <MintWbtc ref="connectComponent" />
   </section>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
+import MintWbtc from './MintWbtc.vue'; // Make sure this path is correct
+
+export default defineComponent({
   name: 'ForCompaniesComponent',
-  data() {
+  components: { MintWbtc },
+  setup() {
+    const connectComponent = ref();
+
+    const handleGetStarted = () => {
+      if (connectComponent.value) {
+        connectComponent.value.openModal();
+      } else {
+        console.error("connectComponent is not defined or doesn't have openModal function.");
+      }
+    };
+
     return {
-      showTestText: false,  // Controls the visibility of the test text
-     
+      handleGetStarted,
+      connectComponent,
     };
   },
-  methods: {
-    handleGetStarted() {
-     
-    }
-  }
-}
+});
 </script>
 
 <style scoped>
