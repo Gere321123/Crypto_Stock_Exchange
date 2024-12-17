@@ -30,7 +30,7 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #e1e1e1;
-  background-color: rgb(35, 36, 39);
+  background-color: #29293d;
   min-height: 100vh; /* Ensures the app takes at least the full viewport height */
   width: 100%; /* Full width */
   box-sizing: border-box;
