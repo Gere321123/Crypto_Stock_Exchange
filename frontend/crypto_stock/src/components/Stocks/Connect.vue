@@ -19,6 +19,7 @@ const chainId = useChainId();
 const { connectors, connect } = useConnect();
 const { address } = useAccount();
 const { disconnect } = useDisconnect();
+const errorMessage = ref('');
 
 const showModal = ref(false);
 
@@ -167,7 +168,33 @@ const send = async () => {
     console.error('Transaction error:', error);
   }
 };
-
+const handleError = (error: any) => {
+  if (error.message.includes('Coin__ERC20InsufficientAllowance')) {
+    errorMessage.value = 'You have not approved the transaction.';
+  } else if (error.message.includes('Coin__NotEnoughTokensAvailable')) {
+    errorMessage.value = 'Not enough tokens available.';
+  } else if (error.message.includes('Coin__InsufficientTokens')) {
+    errorMessage.value = 'Insufficient tokens.';
+  } else if (error.message.includes('Coin__NotAuthorized')) {
+    errorMessage.value = 'You are not authorized.';
+  } else if (error.message.includes('Coin__CompanyWantsToWithdrawMoreMoneyThanAllowed')) {
+    errorMessage.value = 'Company is trying to withdraw more than allowed.';
+  } else if (error.message.includes('Coin__BurnMoreThanTheTokensInTheMarcatCap')) {
+    errorMessage.value = 'Burn amount exceeds market cap.';
+  } else if (error.message.includes('Coin__InsufficientWBTC')) {
+    errorMessage.value = 'Insufficient WBTC.';
+  } else if (error.message.includes('Coin__WBTCTransferFailed')) {
+    errorMessage.value = 'WBTC transfer failed.';
+  } else if (error.message.includes('Coin__FailedToSendWBTC')) {
+    errorMessage.value = 'Failed to send WBTC.';
+  } else if (error.message.includes('Coin__InsufficientWBTCInContract')) {
+    errorMessage.value = 'Insufficient WBTC in contract.';
+  } else if (error.message.includes('Coin__FailedToReceiveWBTC')) {
+    errorMessage.value = 'Failed to receive WBTC.';
+  } else {
+    errorMessage.value = 'An unknown error occurred.';
+  }
+};
 // Expose openModal method to be called from parent component
 defineExpose({ openModal });
 </script>
@@ -203,13 +230,12 @@ defineExpose({ openModal });
       <button  @click="send()">
       Send
     </button>
-  <div v-if="error">
-   Error Message: {{error.message}}
-   <br>
-   Error Name: {{error.name}}
-   <br>
-   Error: {{error}}
-  </div>    
+    <div v-if="error && errorMessage">
+          <p class="error-message">{{ errorMessage }}</p>
+    </div>
+    <div v-if="error && !errorMessage">
+          <p class="error-message">Unknow error</p>
+    </div>
         <!--&& error.message.substring(73, 85) === '0x2e9d4e44' Disconnect Button -->
         <button @click="disconnect()">Disconnect</button>
       </div>
@@ -232,7 +258,9 @@ defineExpose({ openModal });
   justify-content: center;
   align-items: center;
 }
-
+.error-message{
+  color: tomato
+}
 .modal-content {
   background: rgb(20, 20, 20);
   padding: 20px;
