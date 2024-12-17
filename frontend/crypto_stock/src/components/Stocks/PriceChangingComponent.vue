@@ -1,10 +1,10 @@
 <template>
   <div class="price-changing-component">
     <!-- USD label in top-left -->
-    <div class="usd-label">USD</div>
-
+    
     <!-- Time period buttons -->
     <div class="buttons">
+      <div class="usd-label">USD</div>
       <button @click="changeTimePeriod(0)">24h</button>
       <button @click="changeTimePeriod(1)">5d</button>
       <button @click="changeTimePeriod(2)">1m</button>
@@ -263,14 +263,14 @@ button:hover {
   background-color: #8a0c77;
 }
 
-.usd-label {
-  position: absolute;
-  top: 25px;
-  left: 3%;
-  color: white;
-  font-size: 18px;
-  font-weight: bold;
+canvas {
+  margin-top: 5px;
+  display: block;
+  width: 100%;
+  padding: 10px;
+  height: 100%; 
 }
+
 .canvas-container {
   width: 100%;
   position: relative;
@@ -280,13 +280,24 @@ button:hover {
   display: flex;
   justify-content: center;
   margin-top: 0px;
+  flex-wrap: wrap; /* Ensure buttons wrap properly on mobile */
+  gap: 10px; /* Optional: Add space between buttons */
+  align-items: center; /* Vertically align the USD label and buttons */
+}
+.usd-label {
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  margin-right: 10px; /* Add space between USD and the first button */
 }
 
-canvas {
-  margin-top: 5px;
-  display: block;
-  width: 100%;
-  padding: 10px;
-  height: 100%; 
+@media (max-width: 600px) {
+  .buttons {
+    flex-direction: row; /* Keep the layout in a row on smaller screens */
+    justify-content: center; /* Keep the buttons centered */
+  }
+  .buttons button {
+    font-size: 14px; /* Optionally reduce button size on mobile */
+  }
 }
 </style>
