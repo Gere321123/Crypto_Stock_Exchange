@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineExpose } from 'vue';
+import { ref, defineExpose, watch } from 'vue';
 import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract } from '@wagmi/vue';
 
 const { 
@@ -195,6 +195,12 @@ const handleError = (error: any) => {
     errorMessage.value = 'An unknown error occurred.';
   }
 };
+
+watch(error, (newError) => {
+  if (newError) {
+    handleError(newError);
+  }
+});
 // Expose openModal method to be called from parent component
 defineExpose({ openModal });
 </script>
