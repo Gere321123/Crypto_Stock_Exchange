@@ -139,9 +139,7 @@ const approve = async () => {
         functionName: 'approve',
         args: [props.address, props.sendValue * 10 ** 18],
       });
-    } else {
-      //need here a writecontract
-      }
+    } 
   } catch (error) {
     console.error('Transaction error:', error);
   }
@@ -156,7 +154,6 @@ const send = async () => {
           functionName: 'buyTokens',
           args: [props.sendValue * 10 ** 18],
         });
-        console.log("Send " );
     } else {
       writeContract({ 
         address: props.address, 
