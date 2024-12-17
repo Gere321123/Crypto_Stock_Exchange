@@ -29,7 +29,7 @@
     class="company-item"
   >
   <span>{{ stock[2] }}</span>
-  <span>{{ stock[17] }}$</span>
+  <span>{{ stock[17] }} $</span>
     <button @click.stop="goToCompanyDetail(stock[0])" class="learn-more-button">
       Learn More
     </button>
