@@ -2,21 +2,32 @@
   <section class="for-companies">
     <h1>For Companies</h1>
     <p>
-      Crypto Stock enables companies to raise funds through Ethereum-based tokens. This process 
-      provides businesses with a flexible and decentralized way to secure investment while reaching 
-      global investors.
+      Crypto Stock empowers companies to raise capital through Ethereum-based tokens, specifically 
+      using Wrapped Bitcoin (WBTC). This innovative process enables businesses to bypass traditional 
+      financial systems, offering a decentralized way to secure investments from a global pool of crypto investors.
     </p>
     <p>
-      Join the decentralized finance revolution and empower your company to grow with the power 
-      of cryptocurrency.
+      Join the decentralized finance revolution by leveraging cryptocurrency to fuel your company's growth 
+      and unlock new opportunities for expansion, without the limitations of conventional fundraising methods.
     </p>
-    <button class="get-started-button">Get Started</button>
+    <button class="get-started-button" @click="handleGetStarted">Get WBTC</button>
   </section>
 </template>
 
 <script>
 export default {
-  name: 'ForCompaniesComponent'
+  name: 'ForCompaniesComponent',
+  data() {
+    return {
+      showTestText: false,  // Controls the visibility of the test text
+     
+    };
+  },
+  methods: {
+    handleGetStarted() {
+     
+    }
+  }
 }
 </script>
 
@@ -29,7 +40,7 @@ export default {
   color: #ffffff;              /* Text color */
   padding: 20px;               /* Padding */
   text-align: center;          /* Center text */
-  margin-top: 130px;           /* Margin at the top */
+  margin-top: 5%;          /* Margin at the top */
   max-width: 700px;            /* Max width for the content */
   margin-left: auto;           /* Center horizontally */
   margin-right: auto;          /* Center horizontally */
