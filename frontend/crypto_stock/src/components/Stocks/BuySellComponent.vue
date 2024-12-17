@@ -21,12 +21,20 @@
 
       <!-- Stock List -->
       <h3>Existing Stocks</h3>
-      <ul class="company-list">
-        <li v-for="stock in filteredStocks" :key="stock[0]">
-          {{ stock[2] }} - {{ stock[3] }} - ${{ stock[17] }}
-          <button @click="goToCompanyDetail(stock[0])" class="learn-more-button">Learn More</button>
-        </li>
-      </ul>
+      <ul class="company-list" @click="handleContainerClick">
+  <li 
+    v-for="stock in filteredStocks" 
+    :key="stock[0]" 
+    @click.stop="goToCompanyDetail(stock[0])" 
+    class="company-item"
+  >
+    {{ stock[2] }} - {{ stock[3] }} - ${{ stock[17] }}
+    <button @click.stop="goToCompanyDetail(stock[0])" class="learn-more-button">
+      Learn More
+    </button>
+  </li>
+</ul>
+
     </div>
   </section>
 </template>
