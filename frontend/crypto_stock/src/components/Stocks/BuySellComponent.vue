@@ -205,6 +205,11 @@ export default {
     flex-direction: column;
     gap: 10px;
   }
+  .search-input,
+  .sort-select {
+    width: 100%; /* Make both inputs take up full width */
+    box-sizing: border-box;
+  }
   .company-list li {
     flex-direction: column;
     text-align: center;
