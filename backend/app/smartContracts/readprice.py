@@ -18,6 +18,32 @@ CONTRACT_ABI = [
         "inputs": [],
         "outputs": [{"name": "", "type": "uint256"}],
     },
+    {
+    "inputs": [],
+    "name": "getMarketCap",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "geNumberOfTokensInTheMarcetCapp",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
 ]
 # Database connection
 DATABASE = "cryptostock.db"
@@ -48,13 +74,13 @@ def update_stock_prices():
         cursor = conn.cursor()
 
         # Fetch all stocks from the database
-        cursor.execute("SELECT id, url, network, price_history_24, index_price_24, max_price_24, min_price_24 FROM stock")
+        cursor.execute("SELECT id, url, network, price_history_24, index_price_24, max_price_24, min_price_24, total_supply FROM stock")
         stocks = cursor.fetchall()
 
         bitValue = get_bitcoin_value()
 
         for stock in stocks:
-            stock_id, contract_address, network, price_history_24, index_price_24, max_price_24, min_price_24  = stock
+            stock_id, contract_address, network, price_history_24, index_price_24, max_price_24, min_price_24, total_supply  = stock
             price_history_24_array = json.loads(price_history_24)
             # Skip if necessary fields are missing
             if not contract_address or not network:
@@ -75,6 +101,8 @@ def update_stock_prices():
                 # Calculate the token value in USD
                 
                 token_value_in_usd = token_value_in_bitcoin * bitValue
+                marketcap = contract.functions.getMarketCap().call() * token_value_in_usd / (10**18)
+                available_coins = total_supply - (contract.functions.geNumberOfTokensInTheMarcetCapp().call() / (10**18))
 
                 price_history_24_array[index_price_24] = token_value_in_usd
 
@@ -97,8 +125,8 @@ def update_stock_prices():
                     max_price_24 *= 1.001
                 # Update price and priceinUSD in the database
                 cursor.execute(
-                    "UPDATE stock SET price = ?, priceinUSD = ?, price_history_24 = ?, index_price_24 = ?, max_price_24 = ?, min_price_24 = ?  WHERE id = ?",
-                    (token_value_in_bitcoin, token_value_in_usd, price_history_24, index_price_24, max_price_24, min_price_24, stock_id),
+                    "UPDATE stock SET price = ?, priceinUSD = ?, price_history_24 = ?, index_price_24 = ?, max_price_24 = ?, min_price_24 = ?, marketcap = ?, available_coins = ?  WHERE id = ?",
+                    (token_value_in_bitcoin, token_value_in_usd, price_history_24, index_price_24, max_price_24, min_price_24, marketcap, available_coins, stock_id),
                 )
 
             except Exception as e:
