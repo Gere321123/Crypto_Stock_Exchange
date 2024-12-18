@@ -2,15 +2,35 @@
   <section class="for-companies">
     <h1>For Companies</h1>
     <p>
-      Crypto Stock empowers companies to raise capital through Ethereum-based tokens, specifically 
-      using Wrapped Bitcoin (WBTC). This innovative process enables businesses to bypass traditional 
-      financial systems, offering a decentralized way to secure investments from a global pool of crypto investors.
+      🌟 Welcome to the test version of Crypto Stock!We are a team dedicated to helping companies raise capital through Wrapped Bitcoin (WBTC). 
+      This innovative process enables businesses to bypass traditional financial systems, offering a decentralized way to 
+      secure investments from a global pool of crypto investors.
     </p>
     <p>
-      Join the decentralized finance revolution by leveraging cryptocurrency to fuel your company's growth 
-      and unlock new opportunities for expansion, without the limitations of conventional fundraising methods.
+      🤝 Are you a Legal expert, an Animator, a Businessperson, or do you know companies that might be 
+      interested in this? If so, we'd love to hear from you! You can contact us via Telegram at 
+      <a href="https://t.me/Brate113" target="_blank" class="styled-link">@Brate113</a>, or send us an 
+      email at <a href="mailto:gergely.gere@gmail.com" class="styled-link">gergely.gere@gmail.com</a>.
     </p>
-    <button class="get-started-button" @click="handleGetStarted">Get WBTC</button>
+    <p>
+      ❓ Have questions? Don't hesitate to reach out! We are a friendly team and always happy to help.
+    </p>
+    <p>
+      🛠️ Since this is a test version, you can receive test coins to explore the platform. Get started with 
+      some test Sepolia ETH or WBTC using the buttons below:
+    </p>
+    <button
+      class="get-started-button"
+      @click="openLink"
+    >
+      💸 Get test Sepolia ETH
+    </button>
+    <button 
+      class="get-started-button" 
+      @click="handleGetStarted"
+    >
+      💰 Get test WBTC
+    </button>
     <MintWbtc ref="connectComponent" />
   </section>
 </template>
@@ -38,6 +58,11 @@ export default defineComponent({
       connectComponent,
     };
   },
+  methods: {
+  openLink() {
+    window.open('https://cloud.google.com/application/web3/faucet/ethereum/sepolia', '_blank');
+  },
+},
 });
 </script>
 
@@ -50,12 +75,21 @@ export default defineComponent({
   color: #ffffff;              /* Text color */
   padding: 20px;               /* Padding */
   text-align: center;          /* Center text */
-  margin-top: 5%;          /* Margin at the top */
+  margin-top: 2%;          /* Margin at the top */
   max-width: 700px;            /* Max width for the content */
   margin-left: auto;           /* Center horizontally */
   margin-right: auto;          /* Center horizontally */
 }
+.styled-link {
+  color: #921ca2;
+  text-decoration: none;
+  font-weight: bold;
+}
 
+.styled-link:hover {
+  text-decoration: underline;
+  color: #c71ade;
+}
 h1 {
    font-size: 2.5em;
    margin-bottom: 20px;
