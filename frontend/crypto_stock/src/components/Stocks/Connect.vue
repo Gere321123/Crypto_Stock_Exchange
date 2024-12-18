@@ -208,7 +208,7 @@ defineExpose({ openModal });
 <template>
   <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
     <div class="modal-content">
-      <h2>Use Sepolia Testnet</h2>
+      <h2>Use Sepolia Testnet!</h2>
       <!-- Display Connect Options or Connected Info -->
       <div v-if="!address">
         <!-- Wallet Connect Buttons -->
