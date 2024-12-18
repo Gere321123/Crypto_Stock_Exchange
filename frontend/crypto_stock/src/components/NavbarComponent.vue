@@ -44,7 +44,13 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #232427;
+  background: linear-gradient(135deg, 
+  #3e1e44 10%, 
+  #6b2e4a 30%, 
+  #1a0202 50%, 
+  #1f1430 70%, 
+  #30242a 90%, 
+  #111a2d 110%);
   padding: 20px 40px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }

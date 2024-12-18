@@ -144,6 +144,9 @@ export default defineComponent({
   flex: 1 1 25%;
   position: static; /* Avoids fixed positioning for better responsiveness */
   background-color: #191919;
+  background: linear-gradient(
+  #231126,
+  #191919);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   margin: 20px;

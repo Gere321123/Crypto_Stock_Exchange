@@ -241,7 +241,9 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #1f1f1f;
+  background: linear-gradient(
+  #231126,
+  #191919);
   padding: 20px;
   color: rgb(124, 124, 124);
   margin: 20px;
