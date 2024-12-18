@@ -9,7 +9,7 @@
     </a>
     <div class="price-container">
       <div class="price-box">
-        <p>In BIT: {{ company[16].toFixed(8) }} BIT</p>
+        <p>In wBTC:   <span class="token-amount">{{ company[16].toFixed(8) }} wBTC</span></p>
       </div>
       <div class="price-box">
         <p>In USD: {{ parseFloat(company[17]).toFixed(5) }} $</p>
@@ -17,12 +17,13 @@
     </div>
     <div class="price-container">
       <div class="price-box">
-        <p>Market Cap: {{ company[13].toFixed(2) }} $</p>
-      </div>
+   <p>Market Cap: <span class="token-amount">{{ company[13].toFixed(2) }} $</span></p>
+</div>
       <div class="price-box">
-        <p>Number Of Available Tokens: {{ company[14].toFixed(2)  }}</p>
-      </div>
-    </div>
+  <p>Available Tokens: <span class="token-amount">{{ company[14].toFixed(2) }}</span></p>
+</div>
+
+</div>
     <button @click="toggleBuy">Buy Tokens</button>
     <button @click="toggleSell">Sell Tokens</button>
     
@@ -156,9 +157,18 @@ input {
 .price-container {
   display: flex; /* Align items in a row */
   gap: 10px; /* Add spacing between the boxes */
-  margin-top: 20px; /* Add some spacing from other elements */
+  margin: 10px; /* Add some spacing from other elements */
+  justify-content: center; /* Center the boxes horizontally */
+  align-items: center; /* Align boxes vertically */
+}
+.price-box p {
+  line-height: 1.5; /* Adjust line spacing for better readability */
 }
 
+.token-amount {
+  margin: 10px; /* Add space between the text and the number */
+  display: inline-block; /* Ensures spacing applies properly */
+}
 .price-box {
   background-color: #111111; /* Light gray background for contrast */
   border: 1px solid #313131; /* Light border for a subtle effect */
@@ -167,6 +177,11 @@ input {
   flex: 1; /* Ensure boxes have equal width */
   margin: 5px;
   padding: 3px;
+  display: flex; /* Enables Flexbox */
+  align-items: center; /* Vertically centers content */
+  justify-content: center; /* Optionally, horizontally centers content */
+  height: 100%; /* Ensure the box has a defined height for centering */
+  position: relative; /* Allows fine-tuning if needed */
 }
 .company-link {
   text-decoration: none; /* Remove the underline and typical link styling */
