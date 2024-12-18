@@ -189,6 +189,8 @@ const handleError = (error: any) => {
     errorMessage.value = 'Insufficient WBTC in contract.';
   } else if (error.message.includes('Coin__FailedToReceiveWBTC')) {
     errorMessage.value = 'Failed to receive WBTC.';
+  } else if (error.message.includes('User rejected the request')) {
+    errorMessage.value = 'User rejected the request';
   } else {
     errorMessage.value = 'An unknown error occurred.';
   }
@@ -206,8 +208,7 @@ defineExpose({ openModal });
 <template>
   <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
     <div class="modal-content">
-      <h2>Connect Wallet</h2>
-
+      <h2>Use Sepolia Testnet</h2>
       <!-- Display Connect Options or Connected Info -->
       <div v-if="!address">
         <!-- Wallet Connect Buttons -->
@@ -234,9 +235,6 @@ defineExpose({ openModal });
     </button>
     <div v-if="error && errorMessage">
           <p class="error-message">{{ errorMessage }}</p>
-    </div>
-    <div v-if="error && !errorMessage">
-          <p class="error-message">Unknow error</p>
     </div>
         <!--&& error.message.substring(73, 85) === '0x2e9d4e44' Disconnect Button -->
         <button @click="disconnect()">Disconnect</button>
