@@ -109,7 +109,6 @@ export default {
   text-align: center;
   color: #ffffff;
   padding: 40px 20px;
-  min-height: 100vh;
   font-family: Arial, sans-serif;
 }
 

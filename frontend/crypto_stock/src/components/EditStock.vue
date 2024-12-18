@@ -12,6 +12,7 @@
       :address="stock[1]"
       :network="stock[34]"
     />
+    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
     <h2>Edit Stock</h2>
     <form @submit.prevent="saveChanges">
       <div v-if="!loginasCompany">      
@@ -101,6 +102,7 @@ export default {
       loginasCompany: true,
       tokensAmount: 0,
       uplodemoney: true,
+      errorMessage: '',
     };
   },
   components: { WithdrawUplode },
@@ -139,16 +141,18 @@ uplodemoneyfunction() {
       if (this.tokensAmount > 0) {
         this.uplodemoney = true; // Indicate an "upload" operation
         this.$refs.connectComponent?.openModal(); // Open the modal
+        this.errorMessage = '';
       } else {
-        console.error("Please enter a valid tokens amount!");
+        this.errorMessage = 'Please enter a valid tokens amount!';
       }
     },
     widrowMoney() {
       if (this.tokensAmount > 0) {
         this.uplodemoney = false; // Indicate a "withdraw" operation
         this.$refs.connectComponent?.openModal(); // Open the modal
+        this.errorMessage = ''; 
       } else {
-        console.error("Please enter a valid tokens amount!");
+        this.errorMessage = 'Please enter a valid tokens amount!';
       }
     },
 
@@ -206,3 +210,10 @@ uplodemoneyfunction() {
   },
 };
 </script>
+<style scoped>
+.error-message {
+  color: tomato;
+  font-weight: bold;
+  margin-top: 10px;
+}
+</style>

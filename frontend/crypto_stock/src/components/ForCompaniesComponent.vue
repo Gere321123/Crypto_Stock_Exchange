@@ -19,6 +19,18 @@
       🛠️ Since this is a test version, you can receive test coins to explore the platform. Get started with 
       some test Sepolia ETH or WBTC using the buttons below:
     </p>
+    <p>
+      🔑 To log in, use the credentials below to test the platform:
+      <br>
+      <strong>Username:</strong> Gebi
+      <br>
+      <strong>Password:</strong> asd
+      <br>
+      🙇 <strong>Please don't change the password because others may want to try it.</strong>
+    </p>
+    <p>
+      🔗 <a href="/login" class="styled-link">Click here to log in</a>
+    </p>
     <button
       class="get-started-button"
       @click="openLink"
