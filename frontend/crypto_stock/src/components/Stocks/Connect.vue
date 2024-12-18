@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, defineExpose, watch } from 'vue';
 import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract } from '@wagmi/vue';
-
+import {wBTCAddress} from '../../../config';
 const { 
   error,
   writeContract 
@@ -126,8 +126,6 @@ const wBTCAbi = [
   },
 ];
 
-// Replace this with your actual wBTC contract address
-const wBTCAddress = "0x3632cdbaC976e471a874F4C384618d749E6Fba85"; // Example address, replace with the actual address
 
 // Approve the transaction
 

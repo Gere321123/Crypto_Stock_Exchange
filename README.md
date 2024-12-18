@@ -33,7 +33,7 @@ To create a dynamic and fair market, we utilize a **price adjustment formula ins
 
 ## For me 
 
-MockWBTC deployed at: 0x3632cdbaC976e471a874F4C384618d749E6Fba85
+MockWBTC deployed at: 0xc003fD69C5701A34693cA896412EA06F55e23983
 
-Contract Address: 0x5AA9fCF3277C24e5D076968Ccd97069a4baEB893
+Contract Address: 0x7a5B8d40209B7eb3467124c025A791279Bd61c9F
 

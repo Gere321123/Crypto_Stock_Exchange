@@ -1,102 +1,274 @@
-<template>
-  <div v-if="isOpen" class="modal">
-    <h2>Mint Wrapped Bitcoin (WBTC)</h2>
-    <button @click="mintToken" :disabled="loading">{{ loading ? 'Minting...' : 'Mint 0.01 WBTC' }}</button>
-    <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
-
-    <!-- Modal Close Button -->
-    <button @click="closeModal">Close</button>
-  </div>
-</template>
-
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useWriteContract } from '@wagmi/vue';
-import { wBTCAddress } from '../../config';
-const { writeContract } = useWriteContract();
+import { ref, defineExpose, watch } from 'vue';
+import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract } from '@wagmi/vue';
+import {wBTCAddress} from '../../config';
+const { 
+  error,
+  writeContract 
+} = useWriteContract();
 
-const isOpen = ref(false);  // Controls modal visibility
 
-// Method to open the modal
+const props = defineProps<{
+  showBuy: boolean;
+  sendValue: number;
+  address: `0x${string}`;
+  network: string;
+}>();
+
+const chainId = useChainId();
+const { connectors, connect } = useConnect();
+const { address } = useAccount();
+const { disconnect } = useDisconnect();
+const errorMessage = ref('');
+
+const showModal = ref(false);
+
 const openModal = () => {
-  isOpen.value = true;
+  showModal.value = true;
 };
 
-// Method to close the modal
 const closeModal = () => {
-  isOpen.value = false;
+  showModal.value = false;
 };
 
-// ABI for the mint function
-const wBTCAbi = [
+// ABI for interacting with the smart contract
+const contractAbi = [
+  // Function definitions
   {
-    inputs: [],
-    name: "mint",
+    type: 'function',
+    name: 'buyTokens',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: 'wBTCAmount', type: 'uint256' }],
     outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  }
+  },
+  {
+    type: 'function',
+    name: 'sellTokens',
+    stateMutability: 'nonpayable',
+    inputs: [{ name: '_tokenAmount', type: 'uint256' }],
+    outputs: [],
+  },
+
+  // Custom error definitions
+  {
+    type: 'error',
+    name: 'Coin__MustBeMoreThanZero',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__NotEnoughTokensAvailable',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__InsufficientTokens',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__NotAuthorized',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__CompanyWantsToWithdrawMoreMoneyThanAllowed',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__BurnMoreThanTheTokensInTheMarcatCap',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__InsufficientWBTC',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__WBTCTransferFailed',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__FailedToSendWBTC',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__InsufficientWBTCInContract',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__FailedToReceiveWBTC',
+    inputs: [],
+  },
+  {
+    type: 'error',
+    name: 'Coin__ERC20InsufficientAllowance',
+    inputs: [],
+  },
 ];
 
-const errorMessage = ref('');
-const loading = ref(false); // To track the loading state during minting
+// wBTC Contract ABI
+const wBTCAbi = [
+  {
+    inputs: [
+      { internalType: "address", name: "spender", type: "address" },
+      { internalType: "uint256", name: "amount", type: "uint256" },
+    ],
+    name: "approve",
+    outputs: [{ internalType: "bool", name: "", type: "bool" }],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+];
 
-const mintToken = async () => {
-  loading.value = true; // Set loading state to true when minting starts
+
+// Approve the transaction
+
+const approve = async () => {
   try {
-    await writeContract({
-      address: wBTCAddress,
-      abi: wBTCAbi,
-      functionName: 'mint',
-    });
-    errorMessage.value = '';  // Clear any previous error
+    if (props.showBuy) {
+      writeContract({ 
+        address: wBTCAddress, 
+        abi: wBTCAbi, 
+        functionName: 'approve',
+        args: [props.address, props.sendValue * 10 ** 18],
+      });
+    } 
   } catch (error) {
-    console.error('Error during minting:', error);
-    errorMessage.value = 'An error occurred while minting.';
-  } finally {
-    loading.value = false; // Reset loading state once the minting process is complete
+    console.error('Transaction error:', error);
+  }
+      }
+
+const send = async () => {
+  try {
+    if (props.showBuy) {
+    writeContract({ 
+          address: props.address, 
+          abi: contractAbi, 
+          functionName: 'buyTokens',
+          args: [props.sendValue * 10 ** 18],
+        });
+    } else {
+      writeContract({ 
+        address: props.address, 
+        abi: contractAbi, 
+        functionName: 'sellTokens',
+        args: [props.sendValue * 10 ** 18],
+      });
+
+    }
+  } catch (error) {
+    console.error('Transaction error:', error);
+  }
+};
+const handleError = (error: any) => {
+  if (error.message.includes('Coin__ERC20InsufficientAllowance')) {
+    errorMessage.value = 'You have not approved the transaction.';
+  } else if (error.message.includes('Coin__NotEnoughTokensAvailable')) {
+    errorMessage.value = 'Not enough tokens available.';
+  } else if (error.message.includes('Coin__InsufficientTokens')) {
+    errorMessage.value = 'Insufficient tokens.';
+  } else if (error.message.includes('Coin__NotAuthorized')) {
+    errorMessage.value = 'You are not authorized.';
+  } else if (error.message.includes('Coin__CompanyWantsToWithdrawMoreMoneyThanAllowed')) {
+    errorMessage.value = 'Company is trying to withdraw more than allowed.';
+  } else if (error.message.includes('Coin__BurnMoreThanTheTokensInTheMarcatCap')) {
+    errorMessage.value = 'Burn amount exceeds market cap.';
+  } else if (error.message.includes('Coin__InsufficientWBTC')) {
+    errorMessage.value = 'Insufficient WBTC.';
+  } else if (error.message.includes('Coin__WBTCTransferFailed')) {
+    errorMessage.value = 'WBTC transfer failed.';
+  } else if (error.message.includes('Coin__FailedToSendWBTC')) {
+    errorMessage.value = 'Failed to send WBTC.';
+  } else if (error.message.includes('Coin__InsufficientWBTCInContract')) {
+    errorMessage.value = 'Insufficient WBTC in contract.';
+  } else if (error.message.includes('Coin__FailedToReceiveWBTC')) {
+    errorMessage.value = 'Failed to receive WBTC.';
+  } else {
+    errorMessage.value = 'An unknown error occurred.';
   }
 };
 
-// Expose the `openModal` function and `isOpen` state to the parent component
+watch(error, (newError) => {
+  if (newError) {
+    handleError(newError);
+  }
+});
+// Expose openModal method to be called from parent component
 defineExpose({ openModal });
 </script>
 
+<template>
+  <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
+    <div class="modal-content">
+      <h2>Connect Wallet</h2>
+
+      <!-- Display Connect Options or Connected Info -->
+      <div v-if="!address">
+        <!-- Wallet Connect Buttons -->
+        <button
+          v-for="connector in connectors"
+          :key="connector.id"
+          @click="connect({ connector, chainId })"
+        >
+          {{ connector.name }}
+        </button>
+      </div>
+      
+      <div v-else>
+        <!-- Address and Value -->
+        <p>Address: {{ address }}</p>
+        <p>Value: {{ sendValue }}</p>
+
+        <!-- Conditional Button Text -->
+        <p>{{ showBuy ? 'Buy Tokens' : 'Sell Tokens' }}</p>
+        
+      <button v-if="props.showBuy" @click="approve()">
+      Approve
+    </button>
+      <button  @click="send()">
+      Send
+    </button>
+    <div v-if="error && errorMessage">
+          <p class="error-message">{{ errorMessage }}</p>
+    </div>
+    <div v-if="error && !errorMessage">
+          <p class="error-message">Unknow error</p>
+    </div>
+        <!--&& error.message.substring(73, 85) === '0x2e9d4e44' Disconnect Button -->
+        <button @click="disconnect()">Disconnect</button>
+      </div>
+
+      <!-- Close Button -->
+      <button @click="closeModal">Close</button>
+    </div>
+  </div>
+</template>
+
 <style scoped>
-.mint-container {
-  text-align: center;
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.error-message{
+  color: tomato
+}
+.modal-content {
+  background: rgb(20, 20, 20);
   padding: 20px;
-  background-color: #333;
   border-radius: 8px;
-  color: white;
-}
-
-button {
-  background-color: #4CAF50;
-  color: white;
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-button:disabled {
-  background-color: #777;
-  cursor: not-allowed;
-}
-
-button:hover:not(:disabled) {
-  background-color: #45a049;
-}
-
-.success-message {
-  color: green;
-  font-weight: bold;
-}
-
-.error-message {
-  color: red;
-  font-weight: bold;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 </style>
