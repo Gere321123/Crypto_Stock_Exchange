@@ -17,10 +17,10 @@
     </div>
     <div class="price-container">
       <div class="price-box">
-   <p>Market Cap: <span class="token-amount">{{ company[13].toFixed(2) }} $</span></p>
+   <p>Market Cap: <span class="token-amount">{{ formatTokens(company[14]) }} $</span></p>
 </div>
       <div class="price-box">
-  <p>Available Tokens: <span class="token-amount">{{ company[14].toFixed(2) }}</span></p>
+        <p>Available Tokens: <span class="token-amount">{{ formatTokens(company[14]) }}</span></p>
 </div>
 
 </div>
@@ -123,6 +123,18 @@ export default defineComponent({
       connectComponent,
     };
   },
+  methods: {
+    // Format the number with thousand separators and two decimal places
+    formatTokens(value: number): string {
+      const formattedValue = value.toFixed(2);
+
+      const [integerPart, decimalPart] = formattedValue.split('.');
+
+      const integerWithCommas = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+      return `${integerWithCommas}.${decimalPart}`;
+    }
+  }
 });
 </script>
 
