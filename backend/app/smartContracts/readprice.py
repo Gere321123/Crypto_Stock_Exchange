@@ -101,8 +101,10 @@ def update_stock_prices():
                 # Calculate the token value in USD
                 
                 token_value_in_usd = token_value_in_bitcoin * bitValue
-                marketcap = contract.functions.getMarketCap().call() * token_value_in_usd / (10**18)
-                available_coins = total_supply - (contract.functions.geNumberOfTokensInTheMarcetCapp().call() / (10**18))
+
+                tokensInTheMarcetCapp = contract.functions.geNumberOfTokensInTheMarcetCapp().call()
+                available_coins = total_supply - (tokensInTheMarcetCapp / (10**18))
+                marketcap = (tokensInTheMarcetCapp * token_value_in_usd) / (10**18)
 
                 price_history_24_array[index_price_24] = token_value_in_usd
 

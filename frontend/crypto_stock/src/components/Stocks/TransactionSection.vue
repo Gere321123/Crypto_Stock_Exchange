@@ -9,7 +9,7 @@
     </a>
     <div class="price-container">
       <div class="price-box">
-        <p>In BIT: {{ company[16] }} BIT</p>
+        <p>In BIT: {{ company[16].toFixed(8) }} BIT</p>
       </div>
       <div class="price-box">
         <p>In USD: {{ parseFloat(company[17]).toFixed(5) }} $</p>
@@ -18,9 +18,6 @@
     <div class="price-container">
       <div class="price-box">
         <p>Market Cap: {{ company[13] }} $</p>
-      </div>
-      <div class="price-box">
-        <p>Number Of Tokens: {{ company[10] }}</p>
       </div>
       <div class="price-box">
         <p>Number Of Available Tokens: {{ company[14] }}</p>
@@ -168,7 +165,8 @@ input {
   border-radius: 5px; /* Rounded corners for a modern look */
   text-align: center; /* Center text inside the box */
   flex: 1; /* Ensure boxes have equal width */
-  margin: 5px
+  margin: 5px;
+  padding: 3px;
 }
 .company-link {
   text-decoration: none; /* Remove the underline and typical link styling */
