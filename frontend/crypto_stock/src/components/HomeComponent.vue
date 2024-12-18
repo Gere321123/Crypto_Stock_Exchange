@@ -1,13 +1,12 @@
 <template>
   <section class="home">
     <div class="home-content">
-      <h1>Welcome to Crypto Stock</h1>
+      <h1>Welcome to Crypto Stock 🚀</h1>
       <p>
-        This platform allows companies to raise capital by issuing shares in Wrapped Bitcoin, instead of using traditional fiat currencies. In contrast to the usual stock market where shares are purchased with dollars, here companies can create tokens backed by Wrapped Bitcoin. These tokens serve as a digital asset that represents ownership in the company, providing businesses with an innovative way to raise funds. By leveraging the power of blockchain technology, companies can tap into a global network of crypto investors, enabling growth and fostering innovation without the barriers of conventional finance.
+        This platform allows companies to raise capital by issuing shares in Wrapped Bitcoin 💰, instead of using traditional fiat currencies 💵. In contrast to the usual stock market where shares are purchased with dollars 💸, here companies can create tokens backed by Wrapped Bitcoin 🔗. These tokens serve as a digital asset that represents ownership in the company 🏢, providing businesses with an innovative way to raise funds 🚀. By leveraging the power of blockchain technology 🌐, companies can tap into a global network of crypto investors 🌍, enabling growth and fostering innovation without the barriers of conventional finance 📈.
       </p>
       <p>
-        Join us in building a new era of decentralized funding, where growth and innovation 
-        know no borders.
+        Join us in building a new era of decentralized funding 🤝, where growth and innovation know no borders 🌏.
       </p>
     </div>
   </section>
@@ -23,7 +22,6 @@ export default {
 .home {
   display: flex;
   justify-content: center;
-  min-height: 100vh;
   color: #ffffff;
   padding: 20px;
   text-align: center;

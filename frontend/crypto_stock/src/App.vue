@@ -30,7 +30,14 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #e1e1e1;
-  background-color: #29293d;
+  background: linear-gradient(135deg, 
+  #3e1e44 10%, 
+  #6b2e4a 30%, 
+  #1a0202 50%, 
+  #1f1430 70%, 
+  #30242a 90%, 
+  #111a2d 110%);
+
   min-height: 100vh; /* Ensures the app takes at least the full viewport height */
   width: 100%; /* Full width */
   box-sizing: border-box;

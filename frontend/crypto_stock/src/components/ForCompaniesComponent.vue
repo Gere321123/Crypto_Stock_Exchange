@@ -71,7 +71,6 @@ export default defineComponent({
   display: flex;                /* Enable flexbox */
   flex-direction: column;       /* Stack children vertically */
   align-items: center;          /* Center children horizontally */
-  min-height: 100vh;           /* Full viewport height */
   color: #ffffff;              /* Text color */
   padding: 20px;               /* Padding */
   text-align: center;          /* Center text */

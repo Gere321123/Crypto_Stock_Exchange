@@ -7,11 +7,13 @@ import StocksPage from '../components/StocksPage.vue'
 import CompanyDetail from '../components/Stocks/CompanyDetail.vue'
 import EditStock from "../components/EditStock.vue"
 import CompanyEditPage from '../components/CompanyEditPage.vue'
+import HowWork from '../components/HowWork.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: HomeComponent },
   { path: '/buy-sell', name: 'BuySell', component: BuySellComponent },
   { path: '/for-companies', name: 'ForCompanies', component: ForCompaniesComponent },
+  { path: '/howwork', name: 'HowWork', component: HowWork },
   { path: '/login', name: 'Login', component: LoginPage },
   { path: '/company/:id', name: 'companyDetail', component: CompanyDetail, props: true },
   { path: '/stocks', name: 'StocksPage', component: StocksPage },

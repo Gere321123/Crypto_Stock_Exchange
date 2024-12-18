@@ -12,6 +12,7 @@
     <!-- Navigation Links -->
     <ul class="navbar-links" :class="{ active: isMenuOpen }">
       <li><router-link to="/" @click="closeMenu">Home</router-link></li>
+      <li><router-link to="/howwork" @click="closeMenu">How this works?</router-link></li>
       <li><router-link to="/buy-sell" @click="closeMenu">Buy/Sell</router-link></li>
       <li><router-link to="/for-companies" @click="closeMenu">For Companies</router-link></li>
     </ul>

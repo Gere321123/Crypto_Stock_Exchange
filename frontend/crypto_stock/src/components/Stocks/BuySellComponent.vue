@@ -108,7 +108,6 @@ export default {
 .buy-sell {
   text-align: center;
   color: #ffffff;
-  background-color: #1e1e2f;
   padding: 40px 20px;
   min-height: 100vh;
   font-family: Arial, sans-serif;
