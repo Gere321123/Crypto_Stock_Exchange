@@ -168,7 +168,7 @@ const send = async () => {
 };
 const handleError = (error: any) => {
   if (error.message.includes('Coin__ERC20InsufficientAllowance')) {
-    errorMessage.value = 'You have not approved the transaction.';
+    errorMessage.value = 'You need to approved the transaction first.';
   } else if (error.message.includes('Coin__NotEnoughTokensAvailable')) {
     errorMessage.value = 'Not enough tokens available.';
   } else if (error.message.includes('Coin__InsufficientTokens')) {
@@ -221,9 +221,7 @@ defineExpose({ openModal });
       </div>
       
       <div v-else>
-        <!-- Address and Value -->
-        <p>Address: {{ address }}</p>
-        <p>Value: {{ sendValue }}</p>
+        <p>Spend: {{ sendValue }} {{ showBuy ? 'wBTC' : 'CS' }}</p>
 
         <!-- Conditional Button Text -->
         <p>{{ showBuy ? 'Buy Tokens' : 'Sell Tokens' }}</p>

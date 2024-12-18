@@ -29,7 +29,7 @@
     
     <!-- Buy Input -->
     <div v-if="showBuy">
-      <label>BIT to spend:</label>
+      <label>wBTC to spend:</label>
       <input v-model="ethAmount" type="number" @input="calculateTokens" placeholder="Enter BIT amount" />
       <p>You will receive: {{ tokensToReceive }} tokens</p>
     </div>
@@ -38,7 +38,7 @@
     <div v-if="showSell">
       <label>Tokens to sell:</label>
       <input v-model="tokensAmount" type="number" @input="calculateEth" placeholder="Enter tokens amount" />
-      <p>You will receive: {{ ethToReceive }} BIT</p>
+      <p>You will receive: {{ ethToReceive }} wBTC</p>
     </div>
 
     <!-- Connect Wallet Button -->
@@ -94,7 +94,8 @@ export default defineComponent({
 
     const calculateTokens = () => {
       if (props.company[16]) {
-        tokensToReceive.value = ethAmount.value / props.company[16];
+        const amount = ethAmount.value / props.company[16]
+        tokensToReceive.value = amount - (amount / 1000);
       }
     };
 
