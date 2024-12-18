@@ -17,10 +17,10 @@
     </div>
     <div class="price-container">
       <div class="price-box">
-        <p>Market Cap: {{ company[13] }} $</p>
+        <p>Market Cap: {{ company[13].toFixed(2) }} $</p>
       </div>
       <div class="price-box">
-        <p>Number Of Available Tokens: {{ company[14] }}</p>
+        <p>Number Of Available Tokens: {{ company[14].toFixed(2)  }}</p>
       </div>
     </div>
     <button @click="toggleBuy">Buy Tokens</button>
