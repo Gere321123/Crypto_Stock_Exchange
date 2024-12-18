@@ -17,7 +17,7 @@
     </div>
     <div class="price-container">
       <div class="price-box">
-   <p>Market Cap: <span class="token-amount">{{ formatTokens(company[14]) }} $</span></p>
+   <p>Market Cap: <span class="token-amount">{{ formatTokens(company[13]) }} $</span></p>
 </div>
       <div class="price-box">
         <p>Available Tokens: <span class="token-amount">{{ formatTokens(company[14]) }}</span></p>
