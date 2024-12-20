@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, defineExpose } from 'vue';
-import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract } from '@wagmi/vue';
+import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract, useReadContract } from '@wagmi/vue';
 import { wBTCAddress } from '../../../config';
 
 const { 
@@ -110,7 +110,7 @@ const contractAbi = [
 ];
 const getOwner = async () => {
   try {
-    const result = await writeContract({
+    const result = await useReadContract({
       address: props.address,
       abi: contractAbi,
       functionName: 'owner',
