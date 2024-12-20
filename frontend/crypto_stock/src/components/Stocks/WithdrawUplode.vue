@@ -45,6 +45,13 @@ const contractAbi = [
     outputs: []
   },
   {
+  type: 'function',
+  name: 'owner',
+  stateMutability: 'view',
+  inputs: [],
+  outputs: [{ name: '', type: 'address' }],
+},
+  {
     type: 'function',
     name: 'uplodeMoney',
     stateMutability: 'nonpayable',
@@ -101,6 +108,19 @@ const contractAbi = [
     inputs: [],
   },
 ];
+const getOwner = async () => {
+  try {
+    const result = await writeContract({
+      address: props.address,
+      abi: contractAbi,
+      functionName: 'owner',
+    });
+    console.log('Owner address:', result);
+    alert(`Contract Owner: ${result}`);
+  } catch (error) {
+    console.error('Error fetching owner address:', error);
+  }
+};
 
 // Approve the transaction
 const approve = async () => {
@@ -217,6 +237,7 @@ defineExpose({ openModal });
             <input type="checkbox" v-model="canWithdraw" /> Enable Company Withdraw
           </label>
           <button @click="setCompanyWithdraw()">Set Withdraw Permission</button>
+          <button @click="getOwner()">Get Contract Owner</button>
 
           <!-- Input for setcompanyWithdrawalPercentage -->
           <label>
