@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { ref, defineExpose } from 'vue';
 import { useConnect, useChainId, useAccount, useDisconnect, useWriteContract } from '@wagmi/vue';
-import {wBTCAddress} from '../../../config';
+import { wBTCAddress } from '../../../config';
+
 const { 
   error,
   writeContract 
 } = useWriteContract();
-
 
 const props = defineProps<{
   uplodemoney: boolean;
@@ -22,6 +22,8 @@ const { address } = useAccount();
 const { disconnect } = useDisconnect();
 
 const showModal = ref(false);
+const canWithdraw = ref(false);
+const withdrawalPercentage = ref(0);
 
 const openModal = () => {
   showModal.value = true;
@@ -33,7 +35,7 @@ const closeModal = () => {
 
 // ABI for interacting with the smart contract
 const contractAbi = [
-{
+  {
     type: 'function',
     name: 'withdrawCompany',
     stateMutability: 'nonpayable',
@@ -61,6 +63,29 @@ const contractAbi = [
     outputs: []
   },
   {
+    type: 'function',
+    name: 'setCompanyCanWithdraw',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: '_companyCanWithdraw', type: 'bool' }
+    ],
+    outputs: []
+  },
+  {
+    type: 'function',
+    name: 'setcompanyWithdrawalPercentage',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'newcompanyWithdrawalPercentage', type: 'uint8' }
+    ],
+    outputs: []
+  },
+  {
+    type: 'error',
+    name: 'Coin__CompanyWantsToWithdrawMoreMoneyThanAllowed',
+    inputs: [],
+  },
+  {
     type: 'error',
     name: 'Coin__MustBeMoreThanZero',
     inputs: [],
@@ -75,74 +100,15 @@ const contractAbi = [
     name: 'Coin__InsufficientTokens',
     inputs: [],
   },
-  {
-    type: 'error',
-    name: 'Coin__NotAuthorized',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'Coin__CompanyWantsToWithdrawMoreMoneyThanAllowed',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'Coin__BurnMoreThanTheTokensInTheMarcatCap',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'Coin__InsufficientWBTC',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'Coin__WBTCTransferFailed',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'Coin__FailedToSendWBTC',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'Coin__InsufficientWBTCInContract',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'Coin__FailedToReceiveWBTC',
-    inputs: [],
-  },
-  {
-    type: 'error',
-    name: 'Coin__ERC20InsufficientAllowance',
-    inputs: [],
-  },
-];
-// wBTC Contract ABI
-const wBTCAbi = [
-  {
-    inputs: [
-      { internalType: "address", name: "spender", type: "address" },
-      { internalType: "uint256", name: "amount", type: "uint256" },
-    ],
-    name: "approve",
-    outputs: [{ internalType: "bool", name: "", type: "bool" }],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
 ];
 
 // Approve the transaction
-
 const approve = async () => {
   try {
     if (props.uplodemoney) {
       writeContract({ 
         address: wBTCAddress, 
-        abi: wBTCAbi, 
+        abi: contractAbi, 
         functionName: 'approve',
         args: [props.address, props.sendValue * 10 ** 18],
       });
@@ -150,35 +116,60 @@ const approve = async () => {
   } catch (error) {
     console.error('Transaction error:', error);
   }
-      }
+};
 
 const send = async () => {
   try {
-    if (props.loginasCompany){
-    if (props.uplodemoney) {
-    writeContract({ 
+    if (props.loginasCompany) {
+      if (props.uplodemoney) {
+        writeContract({ 
           address: props.address, 
           abi: contractAbi, 
           functionName: 'uplodeMoney',
           args: [props.sendValue * 10 ** 18],
         });
+      } else {
+        writeContract({ 
+          address: props.address, 
+          abi: contractAbi, 
+          functionName: 'withdrawCompany',
+          args: [props.sendValue * 10 ** 18],
+        });
+      }
     } else {
       writeContract({ 
-        address: props.address, 
-        abi: contractAbi, 
-        functionName: 'withdrawCompany',
-        args: [props.sendValue * 10 ** 18],
-      });
-
-    }
-  }else{
-    writeContract({ 
         address: props.address, 
         abi: contractAbi, 
         functionName: 'withdowOwners',
         args: [props.sendValue * 10 ** 18],
       });
+    }
+  } catch (error) {
+    console.error('Transaction error:', error);
   }
+};
+
+const setCompanyWithdraw = async () => {
+  try {
+    writeContract({ 
+      address: props.address, 
+      abi: contractAbi, 
+      functionName: 'setCompanyCanWithdraw',
+      args: [canWithdraw.value],
+    });
+  } catch (error) {
+    console.error('Transaction error:', error);
+  }
+};
+
+const setWithdrawalPercentage = async () => {
+  try {
+    writeContract({ 
+      address: props.address, 
+      abi: contractAbi, 
+      functionName: 'setcompanyWithdrawalPercentage',
+      args: [withdrawalPercentage.value],
+    });
   } catch (error) {
     console.error('Transaction error:', error);
   }
@@ -213,16 +204,37 @@ defineExpose({ openModal });
         <!-- Conditional Button Text -->
         <p>{{ uplodemoney ? 'Buy Tokens' : 'Sell Tokens' }}</p>
         
-      <button v-if="props.uplodemoney && props.loginasCompany" @click="approve()">
-      Approve
-    </button>
-      <button  @click="send()">
-      Send
-    </button>
-  <div v-if="error">
-    {{error.message}}
-  </div>    
-        <!--&& error.message.substring(73, 85) === '0x2e9d4e44' Disconnect Button -->
+        <button v-if="props.uplodemoney && props.loginasCompany" @click="approve()">
+          Approve
+        </button>
+        <button @click="send()">
+          Send
+        </button>
+
+        <div v-if="!props.loginasCompany">
+          <!-- Checkbox for setCompanyCanWithdraw -->
+          <label>
+            <input type="checkbox" v-model="canWithdraw" /> Enable Company Withdraw
+          </label>
+          <button @click="setCompanyWithdraw()">Set Withdraw Permission</button>
+
+          <!-- Input for setcompanyWithdrawalPercentage -->
+          <label>
+            Withdrawal Percentage:
+            <input 
+              type="number" 
+              v-model="withdrawalPercentage" 
+              min="0" 
+              max="100"
+            />
+          </label>
+          <button @click="setWithdrawalPercentage()">Set Withdrawal Percentage</button>
+        </div>
+
+        <div v-if="error">
+          {{ error.message }}
+        </div>
+
         <button @click="disconnect()">Disconnect</button>
       </div>
 
@@ -231,6 +243,7 @@ defineExpose({ openModal });
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .modal-overlay {
