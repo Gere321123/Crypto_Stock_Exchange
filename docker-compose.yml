@@ -1,0 +1,23 @@
+version: "3.8"
+
+services:
+  backend:
+    build:
+      context: ./backend # Itt van a backend kódja
+    ports:
+      - "5000:5000" # Backend elérhető lesz a 5000-es porton
+    volumes:
+      - ./backend:/app # A fejlesztéshez, hogy élőben lásd a változásokat
+    environment:
+      - FLASK_ENV=development # Példa, ha Flask-et használsz
+
+  frontend:
+    build:
+      context: ./frontend/crypto_stock # The correct path to the frontend code
+    ports:
+      - "5173:5173" # Exposing the frontend on port 5173
+    volumes:
+      - ./frontend/crypto_stock:/src # Mount the correct directory
+    environment:
+      - NODE_ENV=development
+    command: npm run dev
